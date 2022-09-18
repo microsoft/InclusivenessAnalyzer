@@ -1,6 +1,6 @@
 {
   "name": "inclusivenessanalyzer",
-  "version": "1.0.0",
+  "version": "0.1.0-beta",
   "description": "GitHub Actions extension that checks code and docs for offensive / exclusive terms and provides warnings.",
   "main": "src/index.js",
   "scripts": {
