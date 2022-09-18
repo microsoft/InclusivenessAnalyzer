@@ -1,14 +1,25 @@
-# Project
+# Inclusiveness Analyzer
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+> Make your code inclusive!
 
-As the maintainer of this project, please make a few updates:
+The Inclusiveness Analyzer is a GitHub action that checks your repository for offensive / exclusive terms.
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+It also provides context on why a word is exclusive and suggests alternate terms that can be used instead.
+
+## Inclusiveness Analyzer for other Platforms
+
+* [Inclusiveness Analyzer for Visual Studio](https://github.com/merill/InclusivenessAnalyzer)
+* [Inclusiveness Analyzer extension for Azure DevOps - TODO](https://github.com/microsoft/InclusivenessAnalyzer)
+
+## About the project
+
+As humans, we hold many unconscious and implicit biases that we rely on to react quickly to our environment and any novel stimuli. However, since the unconscious brain processes and reacts with speed, we sometimes speak quickly without thinking, which may cause us to slip offensive terms and stereotypes although we mean no malice.
+
+In order to confront these biases that we see in ourselves and others, we must rewire ourselves to regularly use inclusive practices (such as the words we speak). If you don't intentionally and proactively include, you will unintentionally exclude.
+
+> Join our effort to push out exclusive terms and make inclusive terms a part of our everyday vocabulary!
+
+Help us confront these biases by pushing out exclusive terms and making inclusive terms a part of our everyday vocabulary!
 
 ## Contributing
 
@@ -27,7 +38,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 ## Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
+trademarks or logos is subject to and must follow
+[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.

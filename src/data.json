@@ -1,0 +1,18 @@
+[
+    {
+        "term": "whitelist",
+        "alternatives": [
+            "allow list",
+            "access list",
+            "permit"
+        ]
+    },
+    {
+        "term": "blacklist",
+        "alternatives": [
+            "deny list",
+            "blocklist",
+            "exclude list"
+        ]    
+    }
+]
