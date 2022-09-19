@@ -4,7 +4,7 @@
   "description": "GitHub Actions extension that checks code and docs for offensive / exclusive terms and provides warnings.",
   "main": "src/index.js",
   "scripts": {
-    "local": "cross-env GITHUB_WORKSPACE=/temp/test INPUT_EXCLUDETERMS=he,she node src/action.js",
+    "local": "cross-env GITHUB_WORKSPACE=/temp/test INPUT_EXCLUDETERMS=he,she INPUT_EXCLUDEFROMSCAN=**/data.json,**/*.ps1 node src/action.js",
     "build": "ncc build src/action.js -o dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

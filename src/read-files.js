@@ -7,7 +7,7 @@ const EXCLUSIONS = [".git", "node_modules"];
 function getFilesFromDirectory(directoryPath) {
 
     // `exclude-from-scan` input defined in action metadata file
-    const excludeFromScan = core.getInput('exclude-from-scan');
+    const excludeFromScan = core.getInput('excludeFromScan');
     //const excludeFromScan = "**/*.ps1,**/*.mp4";
     core.debug(`Excluding file patterns : ${excludeFromScan}`);
     
@@ -16,7 +16,7 @@ function getFilesFromDirectory(directoryPath) {
     
     var filesArray = glob.sync(`${directoryPath}/**/*`, { "nodir": true, "ignore": exclusions });
 
-    core.debug(filesArray);
+    //core.debug(filesArray);
     return filesArray;
 }
 
