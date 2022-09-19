@@ -5,10 +5,10 @@ inputs:
     description: 'Fails the build if a non-inclusive term is found'
     required: false
     default: 'false'
-  exclude-terms:
+  excludeTerms:
     description: 'Comma separated list of non-inclusive terms to exclude from analysis'
     required: false
-  exclude-from-scan:
+  excludeFromScan:
     description: 'Comma separated list of file patterns to exclude from analysis'
     required: false
 runs:
