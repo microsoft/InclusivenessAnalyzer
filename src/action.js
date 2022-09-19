@@ -9,13 +9,15 @@ const fs = require('fs');
 
 async function run() { 
   try {
-    // `who-to-greet` input defined in action metadata file
-    const nameToGreet = core.getInput('who-to-greet');
-    console.log(`Hello ${nameToGreet}!`);
-    const time = (new Date()).toTimeString();
-    core.setOutput("time", time);
+    // `fail-build` input defined in action metadata file
+    const failBuild = core.getInput('fail-build');
 
+    // `exclude-words` input defined in action metadata file
+    const excludeTerms = core.getInput('exclude-terms');
+    console.log(`Excluding terms: ${excludeTerms}`);
+    var exclusions = excludeTerms.split(',');
 
+    
     var passed = true;
 
     const dir = process.env.GITHUB_WORKSPACE;
@@ -30,22 +32,29 @@ async function run() {
       console.log(`Scanning file: ${filename}`);
       
       nonInclusiveTerms.forEach(phrase => {
-        var lines = checkFileForPhrase(filename.toString(), phrase.term);
+        if (!exclusions.includes(phrase)) {
+          var lines = checkFileForPhrase(filename.toString(), phrase.term);
 
-        if (lines.length > 0) {
-          // The Action should fail
-          passed = false;
+          if (lines.length > 0) {
+            // The Action should fail
+            passed = false;
 
-          console.log(`Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}`);
-          lines.forEach(line => {
-            console.log(`\t[Line ${line.number}] ${line.content}`);
-          });
+            console.log(`Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}`);
+            lines.forEach(line => {
+              console.log(`\t[Line ${line.number}] ${line.content}`);
+            });
+          }
         }
+        else
+        console.log(`Skipping the term '${phrase.term}'`);
       });
     });
 
     if (!passed)
-      core.setFailed("Found non inclusive terms in some files.");
+      if (failBuild === 'true')
+        core.setFailed("Found non inclusive terms in some files.");
+      else
+        core.warning("Found non inclusive terms in some files.");
 
   } catch (error) {
     core.setFailed(error.message);
