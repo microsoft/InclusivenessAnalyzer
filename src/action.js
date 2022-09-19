@@ -44,8 +44,12 @@ async function run() {
       });
     });
 
-    if (!passed)
-      core.setFailed("Found non inclusive terms in some files.");
+    if (!passed) {
+      //core.setFailed("Found non inclusive terms in some files.");
+      //output warning and don't fail the action
+      console.warn("Found non inclusive terms in some files.")
+    }
+      
 
   } catch (error) {
     core.setFailed(error.message);
