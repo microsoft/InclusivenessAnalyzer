@@ -10,8 +10,8 @@ outputs:
     description: 'The time we greeted you'
 runs:
   using: 'node16'
-  main: 'src/index.js'
-  
+  main: 'dist/index.js'
+
 branding:
   icon: 'heart'
   color: 'green'

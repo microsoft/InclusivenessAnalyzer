@@ -4,13 +4,18 @@
   "description": "GitHub Actions extension that checks code and docs for offensive / exclusive terms and provides warnings.",
   "main": "src/index.js",
   "scripts": {
+    "build": "ncc build src/action.js -o dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/microsoft/InclusivenessAnalyzer/InclusivenessAnalyzer.git"
   },
-  "keywords": ["inclusive", "inclusion", "D&I"],
+  "keywords": [
+    "inclusive",
+    "inclusion",
+    "D&I"
+  ],
   "author": "Microsoft",
   "license": "MIT",
   "bugs": {
@@ -19,6 +24,7 @@
   "homepage": "https://github.com/microsoft/InclusivenessAnalyzer#readme",
   "dependencies": {
     "@actions/core": "^1.9.1",
-    "@actions/github": "^5.0.1"
+    "@actions/github": "^5.0.1",
+    "@vercel/ncc": "^0.34.0"
   }
 }
