@@ -4,8 +4,7 @@ const checkFileForPhrase = require("./file-content");
 
 const core = require('@actions/core');
 const github = require('@actions/github');
-
-const fs = require('fs');
+const { listenerCount } = require("process");
 
 async function run() { 
   try {
@@ -14,14 +13,16 @@ async function run() {
 
     // `exclude-words` input defined in action metadata file
     const excludeTerms = core.getInput('exclude-terms');
-    console.log(`Excluding terms: ${excludeTerms}`);
+    //const excludeTerms = "he,she";
+    core.debug(`Excluding terms: ${excludeTerms}`);
     var exclusions = excludeTerms.split(',');
 
     
     var passed = true;
 
     const dir = process.env.GITHUB_WORKSPACE;
-    //const dir = `c:\\temp`;
+    //const dir = `C:/Temp`;
+    //const dir = process.cwd().replaceAll("\\", "/");
     
     const nonInclusiveTerms = await getNonInclusiveTerms();
 
@@ -29,11 +30,11 @@ async function run() {
     var filenames = getFilesFromDirectory(dir);
 
     filenames.forEach(filename => {
-      console.log(`Scanning file: ${filename}`);
+      core.debug(`Scanning file: ${filename}`);
       
       nonInclusiveTerms.forEach(phrase => {
-        if (!exclusions.includes(phrase)) {
-          var lines = checkFileForPhrase(filename.toString(), phrase.term);
+        if (!exclusions.includes(phrase.term)) {
+          var lines = checkFileForPhrase(filename, phrase.term);
 
           if (lines.length > 0) {
             // The Action should fail
@@ -42,11 +43,12 @@ async function run() {
             console.log(`Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}`);
             lines.forEach(line => {
               console.log(`\t[Line ${line.number}] ${line.content}`);
+              //core.notice({ file: line.file, line: line.number, title: `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}` })
             });
           }
         }
         else
-        console.log(`Skipping the term '${phrase.term}'`);
+        core.debug(`Skipping the term '${phrase.term}'`);
       });
     });
 

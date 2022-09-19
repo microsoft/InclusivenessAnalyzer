@@ -1,39 +1,22 @@
-const fs = require('fs');
-const path = require('path');
+const core = require('@actions/core');
+const github = require('@actions/github');
+const glob = require("glob")
 
 const EXCLUSIONS = [".git", "node_modules"];
 
-function isExcluded(file) {
-    var exclude = false;
-
-    EXCLUSIONS.forEach(exclusion => {
-        if (file.endsWith(exclusion))
-            exclude = true;
-    });
-
-    return exclude;
-}
-
 function getFilesFromDirectory(directoryPath) {
 
-    var filesArray = [];
-    if (!isExcluded(directoryPath)) {
-        const filesInDirectory = fs.readdirSync(directoryPath);
+    // `exclude-from-scan` input defined in action metadata file
+    const excludeFromScan = core.getInput('exclude-from-scan');
+    //const excludeFromScan = "**/*.ps1,**/*.mp4";
+    core.debug(`Excluding file patterns : ${excludeFromScan}`);
+    
+    var exclusions = EXCLUSIONS.concat(excludeFromScan.split(','));
+    core.debug(directoryPath);
+    
+    var filesArray = glob.sync(`${directoryPath}/**/*`, { "nodir": true, "ignore": exclusions });
 
-        filesInDirectory.map((file) => {
-            const filePath = path.join(directoryPath, file);
-            const stats = fs.statSync(filePath);
-            if (stats.isDirectory()) {
-                getFilesFromDirectory(filePath).map((rfile)=> { filesArray.push(rfile) });
-            } else {
-                // For testing purposes - avoids breaking the workflow
-                if (!filePath.endsWith("data.json"))
-                    filesArray.push(filePath);
-            }
-        })
-
-    }
-
+    core.debug(filesArray);
     return filesArray;
 }
 
