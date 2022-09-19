@@ -2,17 +2,17 @@
     {
         "term": "whitelist",
         "alternatives": [
-            "allow list",
-            "access list",
-            "permit"
+            "allowlist",
+            "accesslist",
+            "permitlist"
         ]
     },
     {
         "term": "blacklist",
         "alternatives": [
-            "deny list",
+            "denylist",
             "blocklist",
-            "exclude list"
+            "excludelist"
         ]    
     }
 ]
