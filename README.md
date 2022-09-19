@@ -8,8 +8,8 @@ It also provides context on why a word is exclusive and suggests alternate terms
 
 ## Inclusiveness Analyzer for other Platforms
 
-* [Inclusiveness Analyzer for Visual Studio](https://github.com/merill/InclusivenessAnalyzer)
-* [Inclusiveness Analyzer extension for Azure DevOps - TODO](https://github.com/microsoft/InclusivenessAnalyzer)
+* [Inclusiveness Analyzer for Visual Studio / nuget](https://github.com/microsoft/InclusivenessAnalyzerVisualStudio)
+* [Inclusiveness Analyzer extension for Azure DevOps](https://github.com/microsoft/InclusivenessAnalyzerAzureDevOps)
 
 ## About the project
 
