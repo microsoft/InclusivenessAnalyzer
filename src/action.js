@@ -13,7 +13,6 @@ async function run() {
 
     // `exclude-words` input defined in action metadata file
     const excludeTerms = core.getInput('exclude-terms');
-    //const excludeTerms = "he,she";
     core.debug(`Excluding terms: ${excludeTerms}`);
     var exclusions = excludeTerms.split(',');
 
