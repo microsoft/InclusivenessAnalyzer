@@ -17,7 +17,7 @@ function checkFileForPhrase(file, phrase) {
                 file: file,
                 number: index+1,
                 column: match.index,
-                content: match.input
+                content: line
             }
             lines.push(output);
         }
