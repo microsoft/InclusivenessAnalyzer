@@ -1,24 +1,24 @@
 # ----
 # Site
 
-title: Hydra Template
-url: "https://proud-alligator.cloudvent.net"
-baseurl:
+title: Inclusiveness Analyzer
+url: "https://microsoft.github.io/InclusivenessAnalyzer/"
+baseurl: "https://microsoft.github.io/InclusivenessAnalyzer/"
 google_analytics_key:
 google_maps_javascript_api_key:
 disqus_shortname:
 
 # Values for the jekyll-seo-tag gem (https://github.com/jekyll/jekyll-seo-tag)
 logo: /siteicon.png
-description: Product marketing template for Jekyll.
+description: Let's make our code inclusive!
 author:
   name:
   email:
-  twitter: # twitter username without the @ symbol
+  twitter: merill
 social:
-  name: Hydra Template
+  name: Inclusiveness Analyzer
   links:
-    - https://github.com/CloudCannon/hydra-jekyll-template
+    - https://microsoft.github.io/InclusivenessAnalyzer/
 
 # -----
 # Build
