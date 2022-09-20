@@ -10,7 +10,7 @@ function checkFileForPhrase(file, phrase) {
             var output = {
                 file: file,
                 number: index,
-                col: match.index,
+                column: match.index,
                 content: match.input
             }
             lines.push(output);
