@@ -13,7 +13,7 @@ inputs:
     required: false
 runs:
   using: 'node16'
-  main: 'dist/action.js'
+  main: 'dist/index.js'
 
 branding:
   icon: 'heart'
