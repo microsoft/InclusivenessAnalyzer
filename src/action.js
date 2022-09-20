@@ -30,7 +30,7 @@ async function run() {
 
     filenames.forEach(filename => {
       core.debug(`Scanning file: ${filename}`);
-      core.startGroup(`Scanning file: ${filename}`);
+      //core.startGroup(`Scanning file: ${filename}`);
 
       nonInclusiveTerms.forEach(phrase => {
         if (!exclusions.includes(phrase.term)) {
@@ -42,7 +42,7 @@ async function run() {
 
             core.warning(`Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}`);
             lines.forEach(line => {
-              core.warning(`\t[Line ${line.number}] ${line.content}`);
+              core.warning(`\t[Line ${line.number}] ${line.content}`, { line: line.number });
               //core.notice({ file: line.file, line: line.number, title: `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}` })
             });
           }
@@ -51,7 +51,7 @@ async function run() {
           core.debug(`Skipping the term '${phrase.term}'`);
       });
 
-      core.endGroup();
+      //core.endGroup();
     });
 
     if (!passed)
