@@ -11,3 +11,6 @@ Add a breakpoint anywhere and you can start debugging.
 This is a sentence that uses he and she, this will be excluded during debug since we added them to the INPUT_EXCLUDETERMS param.
 
 Here is another that uses blacklist, which is not a good thing.
+
+"Her" by itself should be matched.
+But used in "Another" it wont cause an issue.
