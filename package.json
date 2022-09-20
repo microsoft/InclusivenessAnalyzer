@@ -1,10 +1,11 @@
 {
-  "name": "inclusivenessanalyzer",
+  "name": "InclusivenessAnalyzer",
   "version": "v0.1.2-beta",
   "description": "GitHub Actions extension that checks code and docs for offensive / exclusive terms and provides warnings.",
-  "main": "src/index.js",
+  "main": "src/action.js",
   "scripts": {
     "local": "cross-env GITHUB_WORKSPACE=/temp/test INPUT_EXCLUDETERMS=he,she node src/action.js",
+    "prepare": "ncc build src/action.js -o dist --source-map --license licenses.txt",
     "build": "ncc build src/action.js -o dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
