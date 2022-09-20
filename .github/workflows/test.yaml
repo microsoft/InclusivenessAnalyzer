@@ -10,6 +10,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm install
+      - name: Rebuild the dist directory
+        run: npm run prepare
       - name: Inclusiveness Analyzer action step
         id: analyzer
         uses: ./
+        with:
+          excludeFromScan: 'node_modules\*'

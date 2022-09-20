@@ -1,8 +1,8 @@
 name: 'Inclusiveness Analyzer'
 description: 'This GitHub action scans your repository for non-inclusive terms and provide alternative suggestions.'
 inputs:
-  fail-build:  # id of input
-    description: 'Fails the build if a non-inclusive term is found'
+  failStep:
+    description: 'Fails the step if a non-inclusive term is found'
     required: false
     default: 'false'
   excludeTerms:
