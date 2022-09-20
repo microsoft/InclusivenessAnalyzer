@@ -11,13 +11,15 @@ function checkFileForPhrase(file, phrase) {
     var lines = [];
     var content = fs.readFileSync(file, 'utf-8').toString().split("\n");
     content.forEach((line, index) => {
-        if(line.match(r)) {
-            var match = {
+        match = line.match(r)
+        if(match) {
+            var output = {
                 file: file,
                 number: index+1,
-                content: line
+                column: match.index,
+                content: match.input
             }
-            lines.push(match);
+            lines.push(output);
         }
     });
     
