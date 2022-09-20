@@ -43,7 +43,7 @@ async function run() {
             core.warning(`Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}`);
             lines.forEach(line => {
               core.warning(`\t[Line ${line.number}] ${line.content}`, { line: line.number });
-              //core.notice({ file: line.file, line: line.number, title: `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}` })
+              core.notice({ file: line.file, line: line.number, title: `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}` })
             });
           }
         }
