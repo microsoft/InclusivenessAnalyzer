@@ -17,3 +17,5 @@ jobs:
       - name: Inclusiveness Analyzer action step
         id: analyzer
         uses: ./
+        with:
+          excludeFromScan: 'node_modules\*'
