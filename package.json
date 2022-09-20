@@ -1,6 +1,6 @@
 {
   "name": "InclusivenessAnalyzer",
-  "version": "v0.1.3-beta",
+  "version": "v0.1.4-beta",
   "description": "GitHub Actions extension that checks code and docs for offensive / exclusive terms and provides warnings.",
   "main": "src/action.js",
   "scripts": {
