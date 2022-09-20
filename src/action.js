@@ -51,7 +51,7 @@ async function run() {
           core.debug(`Skipping the term '${phrase.term}'`);
       });
 
-      core.stopGroup();
+      core.endGroup();
     });
 
     if (!passed)
