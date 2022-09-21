@@ -18,10 +18,12 @@ async function getNonInclusiveTerms() {
   return data;
 }
 
-function getTermsRegex(exclusions = []){
+function getTermsRegex(exclusions = []) {
+  var regexWhitespace = new RegExp('[\\s _-]', "gi");
+
   var termsArray = data
-      .filter(term => !exclusions.some(exclude => exclude === term.term))
-      .map(term => term.regex ?? term.term);
+    .filter(term => !exclusions.some(exclude => exclude === term.term))
+    .map(term => term.regex ?? term.term.replace(regexWhitespace, '[\\s _-]?'));
 
   return termsArray.join('|');
   //return "white\\s?list|blacklist|[^a-z]he[^a-z]";

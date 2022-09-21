@@ -17,22 +17,26 @@ function checkFileForTerms(file, expression, terms) {
                 passed = false;
 
                 for (const match of matches) {
+                    var termFound = match[0].trim();
                     // get alternatives (need to normalize the match to remove the spaces and aditional chars)
-                    var alternatives = '';
-                    const re = /\w+/g;
-                    var normalized = match[0].match(re);
-                    var details = terms.filter(term => term.term === normalized.join('').trim().toLowerCase());
-                    if (details){
-                        alternatives = details[0].alternatives.join(', ');
+                    var termAlternatives = [];
+                    //const re = /\w+/g;
+                    //var normalized = match[0].match(re);
+                    //var details = terms.filter(term => term.term === normalized.join('').trim().toLowerCase());
+                    var regexWhitespace = new RegExp('[\\s _-]', "gi");
+                    var termFoundNormalized = termFound.replace(regexWhitespace, '').toLowerCase();
+                    var termMatch = terms.find(term => term.term.replace(regexWhitespace, '') === termFoundNormalized);
+                    if (termMatch) {
+                        termAlternatives = termMatch.alternatives;
                     }
 
                     // refactor to use logger
-                    core.warning(`[Line ${index+1}] ${match.input}`,{
-                        file: file,
+                    core.warning(`${file}\#L${index+1}\r\n${match.input}`,{
+                        //file: file,
                         startLine: (index+1).toString(),
                         startColumn: match.index.toString(),
-                        endColumn: match.index + match[0].length,
-                        title: `Found the term '${match[0].trim()}', consider using alternatives: ${alternatives}` });
+                        endColumn: (match.index + termFound.length).toString(),
+                        title: `Consider replacing term "${termFound}" with an alternative such as "${termAlternatives.join('", "')}"` });
                 }
             }
         });
