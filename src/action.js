@@ -42,7 +42,7 @@ async function run() {
             passed = false;
 
             lines.forEach(line => {
-              core.warning(`[${line.file}:${line.number}] Found term '${phrase.term}', consider using alternatives ${phrase.alternatives}`, { file: line.file, startLine: line.number.toString(), startColumn: 3, title: `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}` });
+              core.warning(`[${line.file}:${line.number}] Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'`, { file: line.file, startLine: line.number.toString(), startColumn: line.column, title: `Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'` });
               core.debug(`[${line.file}:${line.number}] ${line.content}`);
             });
           }
