@@ -1,39 +1,32 @@
 - links:
-  - name: Pricing
-    link: /pricing/
-  - name: Blog
-    link: /blog/
   - name: About
     link: /about/
-  - name: Contact
-    link: /contact/
-- links:
-  - name: Login
-    link: /
+  - name: Github Action
+    link: https://github.com/marketplace/actions/inclusiveness-analyzer
     new_window: true
-  - name: Sign Up
-    link: /
-    new_window: true
-  - name: Docs
-    link: /
-    new_window: true
-  - name: Status
-    link: /
+  - name: Azure DevOps Extension
+    link: https://marketplace.visualstudio.com/items?itemName=InclusivenessAnalyzer.InclusivenessAnalyzerAzureDevOps
     new_window: true
 - links:
-  - name: Facebook
-    link: https://facebook.com/cloudcannon/
+  - name: Nuget Package
+    link: https://www.nuget.org/packages/InclusivenessAnalyzer
     new_window: true
-    social_icon: Facebook
-  - name: Twitter
-    link: https://twitter.com/cloudcannon/
-    social_icon: Twitter
+  - name: Visual Studio 2022 Extension
+    link: https://marketplace.visualstudio.com/items?itemName=InclusivenessAnalyzer.inclusivenessanalyzer2022
     new_window: true
-  - name: YouTube
-    link: https://youtube.com/cloudcannon/
-    social_icon: YouTube
+  - name: Visual Studio 2019 Extension
+    link: https://marketplace.visualstudio.com/items?itemName=InclusivenessAnalyzer.inclusivenessanalyzer
     new_window: true
-  - name: RSS
-    link: /feed.xml
-    social_icon: RSS
-    new_window: false
+- links:
+  - name: GitHub Repo for GitHub Action
+    link: https://github.com/microsoft/InclusivenessAnalyzer
+    new_window: true
+    social_icon: GitHub
+  - name: GitHub Repo for Azure DevOps Extension
+    social_icon: GitHub
+    link: https://github.com/microsoft/InclusivenessAnalyzerAzureDevOps
+    new_window: true
+  - name: GitHub Repo for Visual Studio
+    link: https://github.com/microsoft/InclusivenessAnalyzerVisualStudio
+    social_icon: GitHub
+    new_window: true
