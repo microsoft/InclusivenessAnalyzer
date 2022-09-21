@@ -1,6 +1,7 @@
 const isBinaryFileSync = require('isbinaryfile').isBinaryFileSync;
 const fs = require('fs');
 const core = require('@actions/core');
+const logger = require("./logger");
 
 function checkFileForTerms(file, expression, terms) {
     var passed = true;
