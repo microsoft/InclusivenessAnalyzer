@@ -3,7 +3,15 @@ const fs = require('fs');
 const core = require('@actions/core');
 
 function buildTermsRegex(terms){
-    var termsArray = terms.map(term => term.regex ?? term.term);
+    // refactor to use params
+    // `exclude-words` input defined in action metadata file
+    const excludeTerms = core.getInput('excludeterms');
+    console.log(`Excluding terms: ${excludeTerms}`);
+    var exclusions = excludeTerms.toLowerCase().split(",");
+
+    var termsArray = terms
+        .filter(term => !exclusions.some(exclude => exclude === term.term))
+        .map(term => term.regex ?? term.term);
 
     return termsArray.join('|');
     //return "white\\s?list|blacklist|[^a-z]he[^a-z]";
@@ -24,10 +32,11 @@ function checkFileForTerms(file, terms) {
                 passed = false;
 
                 for (const match of matches) {
-                    // get alternatives
+                    // get alternatives (need to normalize the match to remove the spaces and aditional chars)
                     var alternatives = '';
-                    var details = terms.filter(term => term.term.localeCompare(match[0].trim(), undefined, { sensitivity: 'accent' }));
-                    console.log( match[0]);
+                    const re = /\w+/g;
+                    var normalized = match[0].match(re);
+                    var details = terms.filter(term => term.term === normalized.join('').trim().toLowerCase());
                     if (details){
                         alternatives = details[0].alternatives.join(', ');
                     }
@@ -44,7 +53,7 @@ function checkFileForTerms(file, terms) {
         });
     }
     else
-        //
+        // refactor to use logger
         core.debug(`Skipping binary file: ${file}`)
     
     return passed;
