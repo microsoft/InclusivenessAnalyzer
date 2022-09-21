@@ -18,4 +18,4 @@ jobs:
         id: analyzer
         uses: ./
         with:
-          excludeFromScan: '**/node_modules/*,**/dist/*'
+          excludeFromScan: '**/node_modules/**,**/dist/**,**/src/data.json,**/package.json'

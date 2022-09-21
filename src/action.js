@@ -13,7 +13,7 @@ async function run() {
     // `exclude-words` input defined in action metadata file
     const excludeTerms = params.read('excludeterms');
     var exclusions = excludeTerms.split(',');
-    if (excludeTerms !== '')
+    if (excludeTerms.trim() !== '')
       logger.info(`Excluding terms: ${exclusions}`);
 
     var passed = true;
@@ -39,10 +39,10 @@ async function run() {
             // The Action should fail
             passed = false;
 
-            //core.warning(`Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}`);
             lines.forEach(line => {
               logger.warn(`File:  ${line.file} Line: ${line.number}\n\r${line.content}`, line.file, line.number, 0, `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}`);
-              //core.warning(`\t[Line ${line.number}] ${line.content}`, { file: line.file, startLine: line.number.toString(), startColumn: 3, title: `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}` });
+              //core.warning(`[${line.file}:${line.number}] Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'`, { file: line.file, startLine: line.number.toString(), startColumn: line.column, title: `Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'` });
+              //core.debug(`[${line.file}:${line.number}] ${line.content}`);
             });
           }
         }
