@@ -2,26 +2,11 @@ const isBinaryFileSync = require('isbinaryfile').isBinaryFileSync;
 const fs = require('fs');
 const core = require('@actions/core');
 
-function buildTermsRegex(terms){
-    // refactor to use params
-    // `exclude-words` input defined in action metadata file
-    const excludeTerms = core.getInput('excludeterms');
-    console.log(`Excluding terms: ${excludeTerms}`);
-    var exclusions = excludeTerms.toLowerCase().split(",");
-
-    var termsArray = terms
-        .filter(term => !exclusions.some(exclude => exclude === term.term))
-        .map(term => term.regex ?? term.term);
-
-    return termsArray.join('|');
-    //return "white\\s?list|blacklist|[^a-z]he[^a-z]";
-};
-
-function checkFileForTerms(file, terms) {
+function checkFileForTerms(file, expression, terms) {
     var passed = true;
 
     // build the regular expression
-    var regex = buildTermsRegex(terms);
+    var regex = expression;
     var r = new RegExp(regex,"ig");
 
     if (!isBinaryFileSync(file)){

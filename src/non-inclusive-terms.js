@@ -18,4 +18,13 @@ async function getNonInclusiveTerms() {
   return data;
 }
 
-module.exports = getNonInclusiveTerms;
+function getTermsRegex(exclusions = []){
+  var termsArray = data
+      .filter(term => !exclusions.some(exclude => exclude === term.term))
+      .map(term => term.regex ?? term.term);
+
+  return termsArray.join('|');
+  //return "white\\s?list|blacklist|[^a-z]he[^a-z]";
+};
+
+module.exports = { getNonInclusiveTerms, getTermsRegex };
