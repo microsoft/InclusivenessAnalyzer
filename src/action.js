@@ -51,7 +51,7 @@ async function run() {
           core.debug(`Skipping the term '${phrase.term}'`);
       }); */
 
-      checkFileForTerms(filename, nonInclusiveTerms);
+      passed = checkFileForTerms(filename, nonInclusiveTerms);
 
       //core.endGroup();
     });
