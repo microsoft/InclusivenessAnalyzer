@@ -3,18 +3,18 @@
   new_window: false
   highlight: false
 - name: The Team
-  link: theteam
+  link: /theteam
   new_window: false
   highlight: false
 - name: About
-  link: about
+  link: /about
   new_window: false
   highlight: false
 - name: Compare
-  link: comparison
+  link: /pricing
   new_window: false
   highlight: false
 - name: Install
-  link: install
+  link: /install
   new_window: false
   highlight: true
