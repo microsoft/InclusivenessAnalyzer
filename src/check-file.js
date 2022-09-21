@@ -23,7 +23,7 @@ function checkFileForTerms(file, expression, terms) {
                     //const re = /\w+/g;
                     //var normalized = match[0].match(re);
                     //var details = terms.filter(term => term.term === normalized.join('').trim().toLowerCase());
-                    var regexWhitespace = new RegExp('[\\s _-]', "gi");
+                    var regexWhitespace = new RegExp('[\\s_-]', "gi");
                     var termFoundNormalized = termFound.replace(regexWhitespace, '').toLowerCase();
                     var termMatch = terms.find(term => term.term.replace(regexWhitespace, '') === termFoundNormalized);
                     if (termMatch) {
@@ -31,7 +31,9 @@ function checkFileForTerms(file, expression, terms) {
                     }
 
                     // refactor to use logger
-                    core.warning(`${file}\#L${index+1}\r\n${match.input.trim()}`,{
+                    logger.warn(`${file}\#L${index + 1}\n${match.input.trim()}`, file, (index + 1).toString(), match.index.toString(), `Consider replacing term "${termFound}" with an alternative such as "${termAlternatives.join('", "')}"`);
+                    logger.debug(`${file}\#L${index + 1}\n${match.input.trim()}`);
+                    core.warning(`${file}\#L${index + 1}\r\n${match.input.trim()}`,{
                         file: file,
                         startLine: (index+1).toString(),
                         startColumn: match.index.toString(),
