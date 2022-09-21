@@ -31,7 +31,7 @@ collections:
 
 paginate: 10
 paginate_path: "/blog/:num/"
-permalink: pretty
+permalink: /:title
 
 defaults:
   - scope:
@@ -94,6 +94,7 @@ _select_data:
     - Twitter
     - YouTube
     - RSS
+    - GitHub
 
 _comments:
   map: Update the map location and display settings.
