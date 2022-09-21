@@ -1,7 +1,7 @@
 ---
 date: 2020-07-20
 title: Inclusiveness Analyzer GitHub Action
-categories:
+categories: install
 author_staff_member:
 ---
 
