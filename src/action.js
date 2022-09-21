@@ -2,18 +2,17 @@ const getNonInclusiveTerms = require("./non-inclusive-terms");
 const getFilesFromDirectory = require("./read-files");
 const checkFileForPhrase = require("./file-content");
 
-const core = require('@actions/core');
-const github = require('@actions/github');
-const { listenerCount } = require("process");
+const logger = require("./logger");
+const params = require("./params");
 
 async function run() {
   try {
     // `failStep` input defined in action metadata file
-    const failStep = core.getInput('failStep');
+    const failStep = params.read('failStep');
 
     // `exclude-words` input defined in action metadata file
-    const excludeTerms = core.getInput('excludeterms');
-    console.log(`Excluding terms: ${excludeTerms}`);
+    const excludeTerms = params.read('excludeterms');
+    logger.info(`Excluding terms: ${excludeTerms}`);
     var exclusions = excludeTerms.split(',');
 
 
@@ -29,7 +28,7 @@ async function run() {
     var filenames = getFilesFromDirectory(dir);
 
     filenames.forEach(filename => {
-      core.debug(`Scanning file: ${filename}`);
+      logger.debug(`Scanning file: ${filename}`);
       //core.startGroup(`Scanning file: ${filename}`);
 
       nonInclusiveTerms.forEach(phrase => {
@@ -42,12 +41,13 @@ async function run() {
 
             //core.warning(`Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}`);
             lines.forEach(line => {
-              core.warning(`\t[Line ${line.number}] ${line.content}`, { file: line.file, startLine: line.number.toString(), startColumn: 3, title: `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}` });
+              logger.warn(`File:  ${line.file} Line: ${line.number}\n\r${line.content}`, line.file, line.number, 0, `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}`);
+              //core.warning(`\t[Line ${line.number}] ${line.content}`, { file: line.file, startLine: line.number.toString(), startColumn: 3, title: `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}` });
             });
           }
         }
         else
-          core.debug(`Skipping the term '${phrase.term}'`);
+        logger.debug(`Skipping the term '${phrase.term}'`);
       });
 
       //core.endGroup();
@@ -55,12 +55,12 @@ async function run() {
 
     if (!passed)
       if (failStep === 'true')
-        core.setFailed("Found non inclusive terms in some files.");
-      else
-        core.warning("Found non inclusive terms in some files.");
+        logger.fail("Found non inclusive terms in some files.");
+      //else
+      //  logger.warn("Found non inclusive terms in some files.");
 
   } catch (error) {
-    core.setFailed(error.message);
+    logger.fail(error.message);
   }
 }
 
