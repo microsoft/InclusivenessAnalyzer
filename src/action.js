@@ -40,7 +40,8 @@ async function run() {
             passed = false;
 
             lines.forEach(line => {
-              logger.warn(`File:  ${line.file} Line: ${line.number}\n\r${line.content}`, line.file, line.number, 0, `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}`);
+              logger.warn(`[${line.file}:${line.number}] Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'`, line.file, line.number.toString(), line.column, `Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'`);
+              logger.debug(`[${line.file}:${line.number}] ${line.content}`);
               //core.warning(`[${line.file}:${line.number}] Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'`, { file: line.file, startLine: line.number.toString(), startColumn: line.column, title: `Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'` });
               //core.debug(`[${line.file}:${line.number}] ${line.content}`);
             });
