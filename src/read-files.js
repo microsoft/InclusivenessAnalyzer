@@ -1,22 +1,27 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const glob = require("glob")
+const glob = require("glob");
+
+const logger = require("./logger");
+const params = require("./params");
 
 const EXCLUSIONS = [".git", "node_modules"];
 
 function getFilesFromDirectory(directoryPath) {
 
-    // `exclude-from-scan` input defined in action metadata file
-    const excludeFromScan = core.getInput('excludeFromScan');
-    //const excludeFromScan = "**/*.ps1,**/*.mp4";
-    core.debug(`Excluding file patterns : ${excludeFromScan}`);
-    
-    var exclusions = EXCLUSIONS.concat(excludeFromScan.split(','));
-    core.debug(directoryPath);
-    
-    var filesArray = glob.sync(`${directoryPath}/**/*`, { "nodir": true, "ignore": exclusions });
+    var exclusions = EXCLUSIONS;
 
-    //core.debug(filesArray);
+    // `exclude-from-scan` input defined in action metadata file
+    const excludeFromScan = params.read('excludeFromScan');
+    //const excludeFromScan = "**/*.ps1,**/*.mp4";
+    if (excludeFromScan !== '') {
+        exclusions = exclusions.concat(excludeFromScan.split(','));
+        logger.info(`Excluding file patterns : ${exclusions}`);
+    }
+
+    logger.debug(`Base directory: ${directoryPath}`);
+    
+    var filesArray = glob.sync(`${directoryPath}/**/*`, { nodir: true, ignore: exclusions });
+
+    //logger.debug(filesArray);
     return filesArray;
 }
 
