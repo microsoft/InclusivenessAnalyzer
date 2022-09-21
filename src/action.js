@@ -1,6 +1,7 @@
 const getNonInclusiveTerms = require("./non-inclusive-terms");
 const getFilesFromDirectory = require("./read-files");
-const checkFileForPhrase = require("./file-content");
+//const checkFileForPhrase = require("./file-content");
+const checkFileForTerms = require("./check-file");
 
 const core = require('@actions/core');
 const github = require('@actions/github');
@@ -32,7 +33,7 @@ async function run() {
       core.debug(`Scanning file: ${filename}`);
       //core.startGroup(`Scanning file: ${filename}`);
 
-      nonInclusiveTerms.forEach(phrase => {
+/*       nonInclusiveTerms.forEach(phrase => {
         if (!exclusions.includes(phrase.term)) {
           var lines = checkFileForPhrase(filename, phrase.term);
 
@@ -48,7 +49,9 @@ async function run() {
         }
         else
           core.debug(`Skipping the term '${phrase.term}'`);
-      });
+      }); */
+
+      checkFileForTerms(filename, nonInclusiveTerms);
 
       //core.endGroup();
     });
