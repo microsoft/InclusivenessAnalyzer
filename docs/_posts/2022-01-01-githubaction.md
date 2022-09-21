@@ -1,6 +1,6 @@
 ---
-date: 2020-07-20
-title: Inclusiveness Analyzer GitHub Action
+date: 2022-01-01
+title: GitHub Action
 categories:
    - install
 author_staff_member: merill

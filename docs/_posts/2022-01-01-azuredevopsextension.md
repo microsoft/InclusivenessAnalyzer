@@ -1,6 +1,6 @@
 ---
-date: 2020-08-12
-title: Inclusiveness Analyzer Azure DevOps Extension
+date: 2022-01-02
+title: Azure DevOps Extension
 categories: 
    - install
 author_staff_member: merill

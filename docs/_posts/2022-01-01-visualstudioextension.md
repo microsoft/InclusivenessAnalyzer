@@ -1,6 +1,6 @@
 ---
-date: 2020-08-06
-title: Inclusiveness Analyzer Visual Studio Extension
+date: 2022-01-04
+title: Visual Studio Extension
 categories:
    - install
 author_staff_member: merill

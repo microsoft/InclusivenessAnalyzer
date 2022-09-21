@@ -1,9 +1,9 @@
 ---
-date: 2020-08-02
-title: Inclusiveness Analyzer Nuget Package
+date: 2022-01-03
+title: Nuget Package
 categories:
    - install
-author_staff_member: 
+author_staff_member: merill
 ---
 Sales effectiveness refers to the ability of a company’s sales professionals to “win” at each stage of the customer’s buying process, and ultimately earn the business on the right terms and in the right timeframe.
 
