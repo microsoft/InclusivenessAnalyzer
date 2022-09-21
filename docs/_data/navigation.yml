@@ -15,6 +15,6 @@
   new_window: false
   highlight: false
 - name: Install
-  link: /install
+  link: /blog
   new_window: false
   highlight: true
