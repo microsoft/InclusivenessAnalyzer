@@ -17,11 +17,23 @@ function getFilesFromDirectory(directoryPath) {
         logger.info(`Excluding file patterns : ${exclusions}`);
     }
 
-    logger.debug(`Base directory: ${directoryPath}`);
-    
-    var filesArray = glob.sync(`${directoryPath}/**/*`, { nodir: true, ignore: exclusions });
+    // check coherene of base directory
+    coherentDirectoryPath = directoryPath.trim().replace(/\\/g,"/")
+    if (coherentDirectoryPath.charAt(coherentDirectoryPath.length - 1) !== "/") {
+        coherentDirectoryPath += "/"
+    }
+    logger.debug(`Base directory: ${coherentDirectoryPath}`);
 
-    //logger.debug(filesArray);
+    // get files
+    var filesArray = glob.sync(`${coherentDirectoryPath}**/*`, { nodir: true, ignore: exclusions, absolute: true });
+
+    // make all path relative
+    var processPath = process.cwd().replace(/\\/g,"/");
+    var regex = new RegExp(`^${processPath}/`,'')
+    for (var i=0; i<filesArray.length; i++) {
+        filesArray[i] = filesArray[i].replace(regex, "");
+    }    
+    
     return filesArray;
 }
 
