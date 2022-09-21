@@ -1,9 +1,8 @@
 ---
 date: 2020-07-20
-title: The process for direct sales
+title: Inclusiveness Analyzer GitHub Action
 categories:
-  - sales
-author_staff_member: anna
+author_staff_member:
 ---
 
 Direct selling is the marketing and selling of products directly to consumers away from a fixed retail location. Peddling is the oldest form of direct selling. Modern direct selling includes sales made through the party plan, one-on-one demonstrations, and other personal contact arrangements as well as internet sales.
