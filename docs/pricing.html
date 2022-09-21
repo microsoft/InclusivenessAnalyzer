@@ -6,17 +6,17 @@ pricing_table:
   - name: Visual Studio Extension
     color: "#8e8e8e"
     features:
-      - text: $25 per month
+      - text: Works with C#
         highlight: true
-      - text: Up to 5 users
+      - text: Real time IntelliSense
         highlight: false
-      - text: Basic lead scoring
+      - text: Visual Studio only
         highlight: false
-      - text: CRM
+      - text: Individual install
         highlight: false
-      - text: Basic reporting
+      - text: Static word list
         highlight: false
-      - text: Sales map
+      - text: Early dev feedback
         highlight: false
     call_to_action:
       link: http://mysite.com?plan=basic
@@ -24,17 +24,17 @@ pricing_table:
   - name: Nuget Package
     color: "#4a4a4a"
     features:
-      - text: $99 per month
+      - text: Works with C#
         highlight: true
-      - text: Everything in Basic
+      - text: Real time IntelliSense
         highlight: false
-      - text: Up to 25 users
+      - text: Visual Studio only
         highlight: false
-      - text: Advanced lead scoring
+      - text: Any dev using project
         highlight: false
-      - text: Pipeline management
+      - text: Static word list
         highlight: false
-      - text: Advanced reporting
+      - text: Early dev feedback
         highlight: false
     call_to_action:
       link: http://mysite.com?plan=pro
@@ -42,17 +42,17 @@ pricing_table:
   - name: Azure DevOps Extension
     color: "#000000"
     features:
-      - text: $299 per month
+      - text: Works with any language
         highlight: true
-      - text: Everything in Basic and Pro
+      - text: Static analysis on build
         highlight: false
-      - text: Up to 100 users
+      - text: All project types
         highlight: false
-      - text: Campaign builder
+      - text: Build service
         highlight: false
-      - text: Machine learning
+      - text: Supports custom words
         highlight: false
-      - text: Calendar
+      - text: Feedback after build
         highlight: false
     call_to_action:
       link: http://mysite.com?plan=professional
@@ -60,31 +60,31 @@ pricing_table:
   - name: GitHub Action
     color: "#000000"
     features:
-      - text: $299 per month
+      - text: Works with any language
         highlight: true
-      - text: Everything in Basic and Pro
+      - text: Static analysis on build
         highlight: false
-      - text: Up to 100 users
+      - text: All project types
         highlight: false
-      - text: Campaign builder
+      - text: Build service
         highlight: false
-      - text: Machine learning
+      - text: Supports custom words
         highlight: false
-      - text: Calendar
+      - text: Feedback after build
         highlight: false
     call_to_action:
       link: http://mysite.com?plan=professional
       text: Get started
 
 faq:
-  - question: What types of payment do you accept?
-    answer: Credit cards including MasterCard, Visa or American Express.
-  - question: Can I change my plan at a later time?
-    answer: Yes, you can upgrade and downgrade your plan at anytime.
-  - question: Do you offer pricing for nonprofit organizations?
-    answer: Yes, send us a message and we'll set you up on our nonprofit pricing.
+  - question: Is this a Microsoft supported project?
+    answer: No. This is a Microsoft hackathon open source project and is not formally supported project.
+  - question: How do I report issues with the analyzer?
+    answer: Issues can be reported on GitHub. Here are the links for each extension. [GitHub Action](https://github.com/microsoft/InclusivenessAnalyzer/issues), [Azure DevOps](https://github.com/microsoft/InclusivenessAnalyzerAzureDevOps/issues), [Visual Studio & nuget](https://github.com/microsoft/InclusivenessAnalyzerVisualStudio/issues)
+  - question: Are you open to new contributions?
+    answer: Yes! Please open a thread under the Issues tab or submit a PR.
   - question: Questions?
-    answer: Contact us for any further questions at <a href="#">john@business.com</a>.
+    answer: Please feel free to reach out to us on Twitter. <a href="#">john@business.com</a>.
 ---
 <div class="plans">
 	{% for plan in page.pricing_table %}
