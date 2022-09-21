@@ -2,8 +2,8 @@
 # Site
 
 title: Inclusiveness Analyzer
-url: "https://microsoft.github.io/InclusivenessAnalyzer/"
-baseurl: "https://microsoft.github.io/InclusivenessAnalyzer/"
+url: "https://microsoft.github.io/InclusivenessAnalyzer"
+baseurl: "https://microsoft.github.io/InclusivenessAnalyzer"
 google_analytics_key:
 google_maps_javascript_api_key:
 disqus_shortname:
