@@ -20,7 +20,6 @@ async function getNonInclusiveTerms() {
 
 function getTermsRegex(exclusions = []) {
   var regexWhitespace = new RegExp('[\\s_-]', "gi");
-  var regexBeginningEnd = new RegExp('^|$', "gi")
 
   var termsArray = data
     .filter(term => !exclusions.some(exclude => exclude === term.term))
