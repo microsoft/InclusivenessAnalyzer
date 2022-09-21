@@ -31,7 +31,7 @@ function checkFileForTerms(file, expression, terms) {
                     }
 
                     // refactor to use logger
-                    core.warning(`${file}\#L${index+1}\r\n${match.input}`,{
+                    core.warning(`${file}\#L${index+1}\r\n${match.input.trim()}`,{
                         file: file,
                         startLine: (index+1).toString(),
                         startColumn: match.index.toString(),
