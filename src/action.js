@@ -12,9 +12,9 @@ async function run() {
 
     // `exclude-words` input defined in action metadata file
     const excludeTerms = params.read('excludeterms');
-    logger.info(`Excluding terms: ${excludeTerms}`);
     var exclusions = excludeTerms.split(',');
-
+    if (excludeTerms !== '')
+      logger.info(`Excluding terms: ${exclusions}`);
 
     var passed = true;
 
@@ -47,7 +47,7 @@ async function run() {
           }
         }
         else
-        logger.debug(`Skipping the term '${phrase.term}'`);
+        logger.debug(`Skipping the term: '${phrase.term}'`);
       });
 
       //core.endGroup();

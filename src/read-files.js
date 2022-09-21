@@ -7,15 +7,19 @@ const EXCLUSIONS = [".git", "node_modules"];
 
 function getFilesFromDirectory(directoryPath) {
 
+    var exclusions = EXCLUSIONS;
+
     // `exclude-from-scan` input defined in action metadata file
     const excludeFromScan = params.read('excludeFromScan');
     //const excludeFromScan = "**/*.ps1,**/*.mp4";
-    logger.info(`Excluding file patterns : ${excludeFromScan}`);
+    if (excludeFromScan !== '') {
+        exclusions = exclusions.concat(excludeFromScan.split(','));
+        logger.info(`Excluding file patterns : ${exclusions}`);
+    }
+
+    logger.debug(`Base directory: ${directoryPath}`);
     
-    var exclusions = EXCLUSIONS.concat(excludeFromScan.split(','));
-    logger.debug(directoryPath);
-    
-    var filesArray = glob.sync(`${directoryPath}/**/*`, { "nodir": true, "ignore": exclusions });
+    var filesArray = glob.sync(`${directoryPath}/**/*`, { nodir: true, ignore: exclusions });
 
     //logger.debug(filesArray);
     return filesArray;
