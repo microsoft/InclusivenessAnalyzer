@@ -24,9 +24,10 @@ function getTermsRegex(exclusions = []) {
 
   var termsArray = data
     .filter(term => !exclusions.some(exclude => exclude === term.term))
-    .map(term => term.regex ?? term.term.replace(regexWhitespace, '[\\s _-]?').replace(regexBeginningEnd, '[^a-z]'));
+    .map(term => term.regex ?? ((term.term.length < 5) ? `(?<=^|[^a-z])${term.term.replace(regexWhitespace, '[\\s _-]?')}(?=$|[^a-z])` : term.term.replace(regexWhitespace, '[\\s _-]?')));
 
   return termsArray.join('|');
+  //return `(?<=^|[^a-z])${termsArray.join('|')}(?=$|[^a-z])`;
   //return "white\\s?list|blacklist|[^a-z]he[^a-z]";
 };
 
