@@ -32,7 +32,7 @@ function checkFileForTerms(file, expression, terms) {
 
                     // refactor to use logger
                     core.warning(`${file}\#L${index+1}\r\n${match.input}`,{
-                        //file: file,
+                        file: file,
                         startLine: (index+1).toString(),
                         startColumn: match.index.toString(),
                         endColumn: (match.index + termFound.length).toString(),
