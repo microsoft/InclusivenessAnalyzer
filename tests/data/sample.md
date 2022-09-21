@@ -12,5 +12,7 @@ This is a sentence that uses he and she, this will be excluded during debug sinc
 
 Here is another that uses blacklist, which is not a good thing.
 
+Here is another that uses blacklist and white list together :(.
+
 "Her" by itself should be matched.
 But used in "Another" it wont cause an issue.

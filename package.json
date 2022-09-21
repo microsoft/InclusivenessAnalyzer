@@ -5,7 +5,7 @@
   "main": "src/action.js",
   "scripts": {
     "local": "cross-env GITHUB_WORKSPACE=tests/data INPUT_EXCLUDETERMS=he,she INPUT_EXCLUDEFROMSCAN=**/skipme.txt,**/donotscan/* node src/action.js",
-    "debug": "cross-env GITHUB_WORKSPACE=tests/data INPUT_EXCLUDETERMS=he,she node src/action.js",
+    "debug": "cross-env GITHUB_WORKSPACE=tests/data node src/action.js",
     "prepare": "ncc build src/action.js -o dist --source-map --license licenses.txt",
     "build": "ncc build src/action.js -o dist",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -28,8 +28,9 @@
   "dependencies": {
     "@actions/core": "^1.9.1",
     "@actions/github": "^5.0.1",
+    "@vercel/ncc": "^0.34.0",
     "glob": "^8.0.3",
-    "@vercel/ncc": "^0.34.0"
+    "isbinaryfile": "^5.0.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.3"

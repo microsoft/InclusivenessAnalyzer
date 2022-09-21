@@ -1,6 +1,7 @@
-const getNonInclusiveTerms = require("./non-inclusive-terms");
+const nonInclusiveTerms = require("./non-inclusive-terms");
 const getFilesFromDirectory = require("./read-files");
-const checkFileForPhrase = require("./file-content");
+//const checkFileForPhrase = require("./file-content");
+const checkFileForTerms = require("./check-file");
 
 const logger = require("./logger");
 const params = require("./params");
@@ -22,7 +23,7 @@ async function run() {
     //const dir = `C:/Temp`;
     //const dir = process.cwd().replaceAll("\\", "/");
 
-    const nonInclusiveTerms = await getNonInclusiveTerms();
+    const list = await nonInclusiveTerms.getNonInclusiveTerms();
 
     // list all files in the directory
     var filenames = getFilesFromDirectory(dir);
@@ -31,7 +32,7 @@ async function run() {
       logger.debug(`Scanning file: ${filename}`);
       //core.startGroup(`Scanning file: ${filename}`);
 
-      nonInclusiveTerms.forEach(phrase => {
+/*       nonInclusiveTerms.forEach(phrase => {
         if (!exclusions.includes(phrase.term)) {
           var lines = checkFileForPhrase(filename, phrase.term);
 
@@ -48,8 +49,10 @@ async function run() {
           }
         }
         else
-        logger.debug(`Skipping the term: '${phrase.term}'`);
-      });
+          core.debug(`Skipping the term '${phrase.term}'`);
+      }); */
+
+      passed = checkFileForTerms(filename, nonInclusiveTerms.getTermsRegex(exclusions), list);
 
       //core.endGroup();
     });
