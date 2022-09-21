@@ -2,11 +2,15 @@
   link: /
   new_window: false
   highlight: false
+- name: The Team
+  link: /theteam/
+  new_window: false
+  highlight: false
 - name: About
   link: /about/
   new_window: false
   highlight: false
 - name: Install
   link: /install
-  new_window: true
+  new_window: false
   highlight: true
