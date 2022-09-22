@@ -13114,7 +13114,11 @@ function read(name) {
     return core.getInput(name);
 }
 
-module.exports = { read };
+function readBoolean(name) {
+    return core.getBooleanInput(name);
+}
+
+module.exports = { read, readBoolean };
 
 /***/ }),
 
@@ -13123,22 +13127,14 @@ module.exports = { read };
 
 const glob = __nccwpck_require__(1957);
 
+var minimatch = __nccwpck_require__(3973)
+const { REPL_MODE_STRICT } = __nccwpck_require__(8102);
+
 const logger = __nccwpck_require__(4528);
-const params = __nccwpck_require__(84);
 
-const EXCLUSIONS = [".git", "node_modules"];
+const execSync = (__nccwpck_require__(2081).execSync);
 
-function getFilesFromDirectory(directoryPath) {
-
-    var exclusions = EXCLUSIONS;
-
-    // `exclude-from-scan` input defined in action metadata file
-    const excludeFromScan = params.read('excludeFromScan');
-    //const excludeFromScan = "**/*.ps1,**/*.mp4";
-    if (excludeFromScan !== '') {
-        exclusions = exclusions.concat(excludeFromScan.split(','));
-        logger.info(`Excluding file patterns : ${exclusions}`);
-    }
+function getFilesFromDirectory(directoryPath, exclusions) {
 
     // check coherene of base directory
     coherentDirectoryPath = directoryPath.trim().replace(/\\/g,"/")
@@ -13160,7 +13156,26 @@ function getFilesFromDirectory(directoryPath) {
     return filesArray;
 }
 
-module.exports = getFilesFromDirectory;
+function getFilesFromLastCommit(exclusions) {
+    var output = execSync('git log --format= --name-only --diff-filter=AM -n 1');
+    var files = output.toString().trim().split("\n");
+    var includedFiles = []
+    files.forEach(filename => {
+        var skip = false;
+        exclusions.forEach(pattern => {
+            if (minimatch(filename,pattern)) {
+                skip = true;
+                return;
+            }
+        });
+        if (skip) 
+            return;
+        includedFiles.push(filename);
+    });
+    return includedFiles;
+}
+
+module.exports = { getFilesFromDirectory, getFilesFromLastCommit };
 
 /***/ }),
 
@@ -13177,6 +13192,14 @@ module.exports = eval("require")("encoding");
 
 "use strict";
 module.exports = require("assert");
+
+/***/ }),
+
+/***/ 2081:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("child_process");
 
 /***/ }),
 
@@ -13245,10 +13268,20 @@ module.exports = require("path");
 /***/ }),
 
 /***/ 5477:
+
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("punycode");
+
+/***/ }),
+
+/***/ 8102:
+
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("repl");
 
 /***/ }),
 
@@ -13350,23 +13383,41 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 const nonInclusiveTerms = __nccwpck_require__(3778);
-const getFilesFromDirectory = __nccwpck_require__(853);
+const readFiles = __nccwpck_require__(853);
 //const checkFileForPhrase = require("./file-content");
 const checkFileForTerms = __nccwpck_require__(4881);
 
 const logger = __nccwpck_require__(4528);
 const params = __nccwpck_require__(84);
 
+const EXCLUSIONS = [".git", "node_modules"];
+
 async function run() {
   try {
+    logger.info("Inclusiveness Analyzer")
     // `failStep` input defined in action metadata file
-    const failStep = params.read('failStep');
+    const failStep = params.readBoolean('failStep');
+    if (failStep) 
+      logger.info("- Failing if non-inclusive term are found");
 
     // `exclude-words` input defined in action metadata file
     const excludeTerms = params.read('excludeterms');
     var exclusions = excludeTerms.split(',');
     if (excludeTerms.trim() !== '')
-      logger.info(`Excluding terms: ${exclusions}`);
+      logger.info(`- Excluding terms: ${exclusions}`);
+
+    var exclusions = EXCLUSIONS;
+
+    // `exclude-from-scan` input defined in action metadata file
+    const excludeFromScan = params.read('excludeFromScan');
+    //const excludeFromScan = "**/*.ps1,**/*.mp4";
+    if (excludeFromScan !== '') {
+        exclusions = exclusions.concat(excludeFromScan.split(/[, ]+/));
+        logger.info(`- Excluding file patterns : ${exclusions}`);
+    }
+
+    // `last-commit` input defined in action metadata file
+    const checkLastCommit = params.readBoolean('lastCommit');
 
     var passed = true;
 
@@ -13376,8 +13427,14 @@ async function run() {
 
     const list = await nonInclusiveTerms.getNonInclusiveTerms();
 
-    // list all files in the directory
-    var filenames = getFilesFromDirectory(dir);
+    var filenames = []
+    if (checkLastCommit) {
+      logger.info("- Scanning files added or modified in last commit");
+      filenames = readFiles.getFilesFromLastCommit(exclusions);
+    } else { 
+      logger.info("- Scanning all files in directory");
+      filenames = readFiles.getFilesFromDirectory(dir,exclusions);
+    }
 
     filenames.forEach(filename => {
       logger.debug(`Scanning file: ${filename}`);
@@ -13408,11 +13465,8 @@ async function run() {
       //core.endGroup();
     });
 
-    if (!passed)
-      if (failStep === 'true')
+    if (!passed && failStep)
         logger.fail("Found non inclusive terms in some files.");
-      //else
-      //  logger.warn("Found non inclusive terms in some files.");
 
   } catch (error) {
     logger.fail(error.message);
