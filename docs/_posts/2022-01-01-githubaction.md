@@ -12,4 +12,4 @@ To install, follow the link. Select the latest version (beta testing has occurre
 
 ![image](https://user-images.githubusercontent.com/113735277/191857025-2c4d9907-c341-45b8-8506-168e78399ec7.png)
 
-[link](https://github.com/marketplace/actions/inclusiveness-analyzer): GitHub Inclusiveness Analyzer
+[GitHub Marketplace](https://github.com/marketplace/actions/inclusiveness-analyzer): GitHub Inclusiveness Analyzer
