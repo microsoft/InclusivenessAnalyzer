@@ -6890,6 +6890,249 @@ exports.isPlainObject = isPlainObject;
 
 /***/ }),
 
+/***/ 8451:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isBinaryFileSync = exports.isBinaryFile = void 0;
+const fs = __nccwpck_require__(7147);
+const util_1 = __nccwpck_require__(3837);
+const statAsync = util_1.promisify(fs.stat);
+const openAsync = util_1.promisify(fs.open);
+const closeAsync = util_1.promisify(fs.close);
+const MAX_BYTES = 512;
+// A very basic non-exception raising reader. Read bytes and
+// at the end use hasError() to check whether this worked.
+class Reader {
+    constructor(fileBuffer, size) {
+        this.fileBuffer = fileBuffer;
+        this.size = size;
+        this.offset = 0;
+        this.error = false;
+    }
+    hasError() {
+        return this.error;
+    }
+    nextByte() {
+        if (this.offset === this.size || this.hasError()) {
+            this.error = true;
+            return 0xff;
+        }
+        return this.fileBuffer[this.offset++];
+    }
+    next(len) {
+        const n = new Array();
+        for (let i = 0; i < len; i++) {
+            n[i] = this.nextByte();
+        }
+        return n;
+    }
+}
+// Read a Google Protobuf var(iable)int from the buffer.
+function readProtoVarInt(reader) {
+    let idx = 0;
+    let varInt = 0;
+    while (!reader.hasError()) {
+        const b = reader.nextByte();
+        varInt = varInt | ((b & 0x7f) << (7 * idx));
+        if ((b & 0x80) === 0) {
+            break;
+        }
+        idx++;
+    }
+    return varInt;
+}
+// Attempt to taste a full Google Protobuf message.
+function readProtoMessage(reader) {
+    const varInt = readProtoVarInt(reader);
+    const wireType = varInt & 0x7;
+    switch (wireType) {
+        case 0:
+            readProtoVarInt(reader);
+            return true;
+        case 1:
+            reader.next(8);
+            return true;
+        case 2:
+            const len = readProtoVarInt(reader);
+            reader.next(len);
+            return true;
+        case 5:
+            reader.next(4);
+            return true;
+    }
+    return false;
+}
+// Check whether this seems to be a valid protobuf file.
+function isBinaryProto(fileBuffer, totalBytes) {
+    const reader = new Reader(fileBuffer, totalBytes);
+    let numMessages = 0;
+    while (true) {
+        // Definitely not a valid protobuf
+        if (!readProtoMessage(reader) && !reader.hasError()) {
+            return false;
+        }
+        // Short read?
+        if (reader.hasError()) {
+            break;
+        }
+        numMessages++;
+    }
+    return numMessages > 0;
+}
+function isBinaryFile(file, size) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (isString(file)) {
+            const stat = yield statAsync(file);
+            isStatFile(stat);
+            const fileDescriptor = yield openAsync(file, 'r');
+            const allocBuffer = Buffer.alloc(MAX_BYTES);
+            // Read the file with no encoding for raw buffer access.
+            // NB: something is severely wrong with promisify, had to construct my own Promise
+            return new Promise((fulfill, reject) => {
+                fs.read(fileDescriptor, allocBuffer, 0, MAX_BYTES, 0, (err, bytesRead, _) => {
+                    closeAsync(fileDescriptor);
+                    if (err) {
+                        reject(err);
+                    }
+                    else {
+                        fulfill(isBinaryCheck(allocBuffer, bytesRead));
+                    }
+                });
+            });
+        }
+        else {
+            if (size === undefined) {
+                size = file.length;
+            }
+            return isBinaryCheck(file, size);
+        }
+    });
+}
+exports.isBinaryFile = isBinaryFile;
+function isBinaryFileSync(file, size) {
+    if (isString(file)) {
+        const stat = fs.statSync(file);
+        isStatFile(stat);
+        const fileDescriptor = fs.openSync(file, 'r');
+        const allocBuffer = Buffer.alloc(MAX_BYTES);
+        const bytesRead = fs.readSync(fileDescriptor, allocBuffer, 0, MAX_BYTES, 0);
+        fs.closeSync(fileDescriptor);
+        return isBinaryCheck(allocBuffer, bytesRead);
+    }
+    else {
+        if (size === undefined) {
+            size = file.length;
+        }
+        return isBinaryCheck(file, size);
+    }
+}
+exports.isBinaryFileSync = isBinaryFileSync;
+function isBinaryCheck(fileBuffer, bytesRead) {
+    // empty file. no clue what it is.
+    if (bytesRead === 0) {
+        return false;
+    }
+    let suspiciousBytes = 0;
+    const totalBytes = Math.min(bytesRead, MAX_BYTES);
+    // UTF-8 BOM
+    if (bytesRead >= 3 && fileBuffer[0] === 0xef && fileBuffer[1] === 0xbb && fileBuffer[2] === 0xbf) {
+        return false;
+    }
+    // UTF-32 BOM
+    if (bytesRead >= 4 &&
+        fileBuffer[0] === 0x00 &&
+        fileBuffer[1] === 0x00 &&
+        fileBuffer[2] === 0xfe &&
+        fileBuffer[3] === 0xff) {
+        return false;
+    }
+    // UTF-32 LE BOM
+    if (bytesRead >= 4 &&
+        fileBuffer[0] === 0xff &&
+        fileBuffer[1] === 0xfe &&
+        fileBuffer[2] === 0x00 &&
+        fileBuffer[3] === 0x00) {
+        return false;
+    }
+    // GB BOM
+    if (bytesRead >= 4 &&
+        fileBuffer[0] === 0x84 &&
+        fileBuffer[1] === 0x31 &&
+        fileBuffer[2] === 0x95 &&
+        fileBuffer[3] === 0x33) {
+        return false;
+    }
+    if (totalBytes >= 5 && fileBuffer.slice(0, 5).toString() === '%PDF-') {
+        /* PDF. This is binary. */
+        return true;
+    }
+    // UTF-16 BE BOM
+    if (bytesRead >= 2 && fileBuffer[0] === 0xfe && fileBuffer[1] === 0xff) {
+        return false;
+    }
+    // UTF-16 LE BOM
+    if (bytesRead >= 2 && fileBuffer[0] === 0xff && fileBuffer[1] === 0xfe) {
+        return false;
+    }
+    for (let i = 0; i < totalBytes; i++) {
+        if (fileBuffer[i] === 0) {
+            // NULL byte--it's binary!
+            return true;
+        }
+        else if ((fileBuffer[i] < 7 || fileBuffer[i] > 14) && (fileBuffer[i] < 32 || fileBuffer[i] > 127)) {
+            // UTF-8 detection
+            if (fileBuffer[i] > 193 && fileBuffer[i] < 224 && i + 1 < totalBytes) {
+                i++;
+                if (fileBuffer[i] > 127 && fileBuffer[i] < 192) {
+                    continue;
+                }
+            }
+            else if (fileBuffer[i] > 223 && fileBuffer[i] < 240 && i + 2 < totalBytes) {
+                i++;
+                if (fileBuffer[i] > 127 && fileBuffer[i] < 192 && fileBuffer[i + 1] > 127 && fileBuffer[i + 1] < 192) {
+                    i++;
+                    continue;
+                }
+            }
+            suspiciousBytes++;
+            // Read at least 32 fileBuffer before making a decision
+            if (i >= 32 && (suspiciousBytes * 100) / totalBytes > 10) {
+                return true;
+            }
+        }
+    }
+    if ((suspiciousBytes * 100) / totalBytes > 10) {
+        return true;
+    }
+    if (suspiciousBytes > 1 && isBinaryProto(fileBuffer, totalBytes)) {
+        return true;
+    }
+    return false;
+}
+function isString(x) {
+    return typeof x === 'string';
+}
+function isStatFile(stat) {
+    if (!stat.isFile()) {
+        throw new Error(`Path provided was not a file!`);
+    }
+}
+
+
+/***/ }),
+
 /***/ 4917:
 /***/ ((module) => {
 
@@ -12722,30 +12965,104 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 5433:
+/***/ 4881:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
+const isBinaryFileSync = (__nccwpck_require__(8451).isBinaryFileSync);
 const fs = __nccwpck_require__(7147);
+const core = __nccwpck_require__(2186);
+const logger = __nccwpck_require__(4528);
 
-function checkFileForPhrase(file, phrase) {
+function checkFileForTerms(file, expression, terms) {
+    var passed = true;
 
-    var lines = [];
-    var content = fs.readFileSync(file, 'utf-8').toString().split("\n");
-    content.forEach((line, index) => {
-        if(line.match(phrase)) {
-            var match = {
-                file: file,
-                number: index,
-                content: line
+    // build the regular expression
+    var regex = expression;
+    var r = new RegExp(regex,"ig");
+
+    if (!isBinaryFileSync(file)){
+        var content = fs.readFileSync(file, 'utf-8').toString().split("\n");
+        content.forEach((line, index) => {
+            var matches = line.matchAll(r);
+            if(matches) {
+                passed = false;
+
+                for (const match of matches) {
+                    var termFound = match[0].trim();
+                    
+                    // get alternatives (need to normalize the match to remove the spaces and aditional chars)
+                    var termAlternatives = [];
+                    var regexWhitespace = new RegExp('[\\s_-]', "gi");
+                    var termFoundNormalized = termFound.replace(regexWhitespace, '').toLowerCase();
+                    var termMatch = terms.find(term => term.term.replace(regexWhitespace, '') === termFoundNormalized);
+                    if (termMatch) {
+                        termAlternatives = termMatch.alternatives;
+                    }
+
+                    // add endColumn to logger?  match.index + termFound.length
+                    logger.warn(`${file}\#L${index + 1} ${match.input.trim()}`, file, (index + 1).toString(), match.index.toString(), `Consider replacing term "${termFound}" with an alternative such as "${termAlternatives.join('", "')}"`);
+                    logger.debug(`${file}\#L${index + 1} ${match.input.trim()}`);
+                    // core.warning(`${file}\#L${index + 1}\r\n${match.input.trim()}`,{
+                    //     file: file,
+                    //     startLine: (index+1).toString(),
+                    //     startColumn: match.index.toString(),
+                    //     endColumn: (match.index + termFound.length).toString(),
+                    //     title: `Consider replacing term "${termFound}" with an alternative such as "${termAlternatives.join('", "')}"` 
+                    // });
+                }
             }
-            lines.push(match);
-        }
-    });
+        });
+    }
+    else
+        // refactor to use logger
+        core.debug(`Skipping binary file: ${file}`)
     
-    return lines;
+    return passed;
 }
 
-module.exports = checkFileForPhrase;
+module.exports = checkFileForTerms;
+
+/***/ }),
+
+/***/ 4528:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(2186);
+const github = __nccwpck_require__(5438);
+
+function info(message, file = '', line = 0, column = 0, title = "") {
+    if (file === '')
+        core.notice(message);
+    else
+        core.notice(message, { file: file, startLine: line.toString(), column: column.toString(), title: title });
+}
+
+function warn(message, file = '', line = 0, column = 0, title = "") {
+    if (file === '')
+        core.warning(message);
+    else
+        core.warning(message, { file: file, startLine: line.toString(), column: column.toString(), title: title });
+}
+
+function debug(message, file = '', line = 0, column = 0, title = "") {
+    if (file === '')
+        core.debug(message);
+    else
+        core.debug(message, { file: file, startLine: line.toString(), column: column.toString(), title: title });
+}
+
+function error(message, file = '', line = 0, column = 0, title = "") {
+    if (file === '')
+        core.error(message);
+    else
+        core.error(message, { file: file, startLine: line.toString(), column: column.toString(), title: title });
+}
+
+function fail(message) {
+    core.setFailed(message);
+}
+
+module.exports = { info, warn, debug, fail };
 
 /***/ }),
 
@@ -12772,32 +13089,74 @@ async function getNonInclusiveTerms() {
   return data;
 }
 
-module.exports = getNonInclusiveTerms;
+function getTermsRegex(exclusions = []) {
+  var regexWhitespace = new RegExp('[\\s_-]', "gi");
+
+  var termsArray = data
+    .filter(term => !exclusions.some(exclude => exclude === term.term))
+    .map(term => term.regex ?? ((term.term.length < 5) ? `(?<=^|[^a-z])${term.term.replace(regexWhitespace, '[\\s_-]?')}(?=$|[^a-z])` : term.term.replace(regexWhitespace, '[\\s_-]?')));
+
+  return termsArray.join('|');
+  //return `(?<=^|[^a-z])${termsArray.join('|')}(?=$|[^a-z])`;
+};
+
+module.exports = { getNonInclusiveTerms, getTermsRegex };
+
+/***/ }),
+
+/***/ 84:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(2186);
+const github = __nccwpck_require__(5438);
+
+function read(name) {
+    return core.getInput(name);
+}
+
+module.exports = { read };
 
 /***/ }),
 
 /***/ 853:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const core = __nccwpck_require__(2186);
-const github = __nccwpck_require__(5438);
-const glob = __nccwpck_require__(1957)
+const glob = __nccwpck_require__(1957);
+
+const logger = __nccwpck_require__(4528);
+const params = __nccwpck_require__(84);
 
 const EXCLUSIONS = [".git", "node_modules"];
 
 function getFilesFromDirectory(directoryPath) {
 
-    // `exclude-from-scan` input defined in action metadata file
-    const excludeFromScan = core.getInput('excludeFromScan');
-    //const excludeFromScan = "**/*.ps1,**/*.mp4";
-    core.debug(`Excluding file patterns : ${excludeFromScan}`);
-    
-    var exclusions = EXCLUSIONS.concat(excludeFromScan.split(','));
-    core.debug(directoryPath);
-    
-    var filesArray = glob.sync(`${directoryPath}/**/*`, { "nodir": true, "ignore": exclusions });
+    var exclusions = EXCLUSIONS;
 
-    //core.debug(filesArray);
+    // `exclude-from-scan` input defined in action metadata file
+    const excludeFromScan = params.read('excludeFromScan');
+    //const excludeFromScan = "**/*.ps1,**/*.mp4";
+    if (excludeFromScan !== '') {
+        exclusions = exclusions.concat(excludeFromScan.split(','));
+        logger.info(`Excluding file patterns : ${exclusions}`);
+    }
+
+    // check coherene of base directory
+    coherentDirectoryPath = directoryPath.trim().replace(/\\/g,"/")
+    if (coherentDirectoryPath.charAt(coherentDirectoryPath.length - 1) !== "/") {
+        coherentDirectoryPath += "/"
+    }
+    logger.debug(`Base directory: ${coherentDirectoryPath}`);
+
+    // get files
+    var filesArray = glob.sync(`${coherentDirectoryPath}**/*`, { nodir: true, ignore: exclusions, absolute: true });
+
+    // make all path relative
+    var processPath = process.cwd().replace(/\\/g,"/");
+    var regex = new RegExp(`^${processPath}/`,'')
+    for (var i=0; i<filesArray.length; i++) {
+        filesArray[i] = filesArray[i].replace(regex, "");
+    }    
+    
     return filesArray;
 }
 
@@ -12885,14 +13244,6 @@ module.exports = require("path");
 
 /***/ }),
 
-/***/ 7282:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("process");
-
-/***/ }),
-
 /***/ 5477:
 /***/ ((module) => {
 
@@ -12953,7 +13304,7 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('[{"term":"whitelist","alternatives":["allow list","access list","permit"]},{"term":"white list","alternatives":["allow list","access list","permit"]},{"term":"blacklist","alternatives":["deny list","blocklist","exclude list"]},{"term":"black list","alternatives":["deny list","blocklist","exclude list"]},{"term":"master","alternatives":["primary","main","default","leader"]},{"term":"slave","alternatives":["replica","standby","secondary","follower"]},{"term":"minority","alternatives":["marginalized groups","underrepresented groups","people of color"]},{"term":"minorities","alternatives":["marginalized groups","underrepresented groups","people of color"]},{"term":"brownbag","alternatives":["learning session","lunch-and-learn","sack lunch"]},{"term":"brown bag","alternatives":["learning session","lunch-and-learn","sack lunch"]},{"term":"white box","alternatives":["open-box"]},{"term":"white-box","alternatives":["open-box"]},{"term":"black box","alternatives":["closed-box"]},{"term":"black-box","alternatives":["closed-box"]},{"term":"culture fit","alternatives":["values fit","cultural contribution"]},{"term":"citizen","alternatives":["resident","people"]},{"term":"guys","alternatives":["folks, you all","y\'all","people","teammates","team"]},{"term":"he","alternatives":["they"]},{"term":"his","alternatives":["their","theirs"]},{"term":"him","alternatives":["them"]},{"term":"she","alternatives":["they"]},{"term":"her","alternatives":["their"]},{"term":"hers","alternatives":["theirs"]},{"term":"manpower","alternatives":["human effort","person hours","engineer hours","work","workforce","personnel","team","workers"]},{"term":"man hours","alternatives":["human effort","person hours","engineer hours","work","workforce","personnel","team","workers"]},{"term":"mankind","alternatives":["people","humanity"]},{"term":"chairman","alternatives":["chairperson","spokesperson","moderator","discussion leader","chair"]},{"term":"foreman","alternatives":["chairperson","spokesperson","moderator","discussion leader","chair"]},{"term":"middleman","alternatives":["middle person","intermediary","agent","dealer"]},{"term":"mother","alternatives":["parent","caretaker","nurturer","guardian"]},{"term":"mothering","alternatives":["parenting","caretaking","caring","nurturing"]},{"term":"father","alternatives":["parent","caretaker","nurturer","guardian"]},{"term":"fathering","alternatives":["parenting","caretaking","caring","nurturing"]},{"term":"wife","alternatives":["spouse","partner","significant other"]},{"term":"husband","alternatives":["spouse","partner","significant other"]},{"term":"boyfriend","alternatives":["partner","significant other"]},{"term":"girlfriend","alternatives":["partner","significant other"]},{"term":"girl","alternatives":["woman"]},{"term":"girls","alternatives":["women"]},{"term":"female","alternatives":["woman"]},{"term":"females","alternatives":["women"]},{"term":"boy","alternatives":["man"]},{"term":"boys","alternatives":["men"]},{"term":"male","alternatives":["man"]},{"term":"males","alternatives":["men"]},{"term":"mom test","alternatives":["user test"]},{"term":"girlfriend test","alternatives":["user test"]},{"term":"ninja","alternatives":["professional"]},{"term":"rockstar","alternatives":["professional"]},{"term":"housekeeping","alternatives":["maintenance","cleanup","preparation"]},{"term":"opposite sex","alternatives":["different sex"]},{"term":"grandfathered in","alternatives":["exempt"]},{"term":"grandfathered","alternatives":["exempt"]},{"term":"midget","alternatives":["little person","short stature","person with dwarfism"]},{"term":"crazy","alternatives":["unexpected","unpredictable","surprising"]},{"term":"insane","alternatives":["unexpected","unpredictable","surprising"]},{"term":"freak","alternatives":["unexpected","unpredictable","surprising"]},{"term":"tone deaf","alternatives":["oblivious"]},{"term":"blind spot","alternatives":["dead spot","unseen area"]},{"term":"OCD","alternatives":["organized","detail-oriented"]},{"term":"depressed","alternatives":["sad","upset"]},{"term":"depressing","alternatives":["saddening","upsetting"]},{"term":"handicap","alternatives":["person with a disability"]},{"term":"cripple","alternatives":["person with a disability"]},{"term":"sanity check","alternatives":["quick check","confidence check","coherence check"]},{"term":"sane","alternatives":["correct","adequate","sufficient","valid","sensible","coherent"]},{"term":"retard","alternatives":["person with disabilities","mentally limited"]},{"term":"dummy value","alternatives":["placeholder value","sample value","design value"]}]');
+module.exports = JSON.parse('[{"term":"whitelist","regex":"white[\\\\s_-]?list","alternatives":["allow list","access list","permit"]},{"term":"blacklist","regex":"black[\\\\s_-]?list","alternatives":["deny list","blocklist","exclude list"]},{"term":"master","alternatives":["primary","main","default","leader"]},{"term":"slave","alternatives":["replica","standby","secondary","follower"]},{"term":"minority","alternatives":["marginalized groups","underrepresented groups","people of color"]},{"term":"minorities","alternatives":["marginalized groups","underrepresented groups","people of color"]},{"term":"brown bag","alternatives":["learning session","lunch-and-learn","sack lunch"]},{"term":"white box","alternatives":["open-box"]},{"term":"black box","alternatives":["closed-box"]},{"term":"culture fit","alternatives":["values fit","cultural contribution"]},{"term":"citizen","alternatives":["resident","people"]},{"term":"guys","alternatives":["folks, you all","y\'all","people","teammates","team"]},{"term":"he","regex":"(?<=^|[^a-z])he(?=$|[^a-z])","alternatives":["they"]},{"term":"his","alternatives":["their","theirs"]},{"term":"him","alternatives":["them"]},{"term":"she","alternatives":["they"]},{"term":"her","alternatives":["their"]},{"term":"hers","alternatives":["theirs"]},{"term":"manpower","alternatives":["human effort","person hours","engineer hours","work","workforce","personnel","team","workers"]},{"term":"man hours","alternatives":["human effort","person hours","engineer hours","work","workforce","personnel","team","workers"]},{"term":"mankind","alternatives":["people","humanity"]},{"term":"chairman","alternatives":["chairperson","spokesperson","moderator","discussion leader","chair"]},{"term":"foreman","alternatives":["chairperson","spokesperson","moderator","discussion leader","chair"]},{"term":"middleman","alternatives":["middle person","intermediary","agent","dealer"]},{"term":"mother","alternatives":["parent","caretaker","nurturer","guardian"]},{"term":"mothering","alternatives":["parenting","caretaking","caring","nurturing"]},{"term":"father","alternatives":["parent","caretaker","nurturer","guardian"]},{"term":"fathering","alternatives":["parenting","caretaking","caring","nurturing"]},{"term":"wife","alternatives":["spouse","partner","significant other"]},{"term":"husband","alternatives":["spouse","partner","significant other"]},{"term":"boyfriend","alternatives":["partner","significant other"]},{"term":"girlfriend","alternatives":["partner","significant other"]},{"term":"girl","alternatives":["woman"]},{"term":"girls","alternatives":["women"]},{"term":"female","alternatives":["woman"]},{"term":"females","alternatives":["women"]},{"term":"boy","alternatives":["man"]},{"term":"boys","alternatives":["men"]},{"term":"male","alternatives":["man"]},{"term":"males","alternatives":["men"]},{"term":"mom test","alternatives":["user test"]},{"term":"girlfriend test","alternatives":["user test"]},{"term":"ninja","alternatives":["professional"]},{"term":"rock star","alternatives":["professional"]},{"term":"housekeeping","alternatives":["maintenance","cleanup","preparation"]},{"term":"opposite sex","alternatives":["different sex"]},{"term":"grandfathered in","alternatives":["exempt"]},{"term":"grandfathered","alternatives":["exempt"]},{"term":"midget","alternatives":["little person","short stature","person with dwarfism"]},{"term":"crazy","alternatives":["unexpected","unpredictable","surprising"]},{"term":"insane","alternatives":["unexpected","unpredictable","surprising"]},{"term":"freak","alternatives":["unexpected","unpredictable","surprising"]},{"term":"tone deaf","alternatives":["oblivious"]},{"term":"blind spot","regex":"blind\\\\s?spot","alternatives":["dead spot","unseen area"]},{"term":"OCD","alternatives":["organized","detail-oriented"]},{"term":"depressed","alternatives":["sad","upset"]},{"term":"depressing","alternatives":["saddening","upsetting"]},{"term":"handicap","alternatives":["person with a disability"]},{"term":"cripple","alternatives":["person with a disability"]},{"term":"sanity check","alternatives":["quick check","confidence check","coherence check"]},{"term":"sane","alternatives":["correct","adequate","sufficient","valid","sensible","coherent"]},{"term":"retard","alternatives":["person with disabilities","mentally limited"]},{"term":"dummy value","alternatives":["placeholder value","sample value","design value"]}]');
 
 /***/ })
 
@@ -12998,24 +13349,24 @@ module.exports = JSON.parse('[{"term":"whitelist","alternatives":["allow list","
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const getNonInclusiveTerms = __nccwpck_require__(3778);
+const nonInclusiveTerms = __nccwpck_require__(3778);
 const getFilesFromDirectory = __nccwpck_require__(853);
-const checkFileForPhrase = __nccwpck_require__(5433);
+//const checkFileForPhrase = require("./file-content");
+const checkFileForTerms = __nccwpck_require__(4881);
 
-const core = __nccwpck_require__(2186);
-const github = __nccwpck_require__(5438);
-const { listenerCount } = __nccwpck_require__(7282);
+const logger = __nccwpck_require__(4528);
+const params = __nccwpck_require__(84);
 
 async function run() {
   try {
     // `failStep` input defined in action metadata file
-    const failStep = core.getInput('failStep');
+    const failStep = params.read('failStep');
 
     // `exclude-words` input defined in action metadata file
-    const excludeTerms = core.getInput('excludeterms');
-    console.log(`Excluding terms: ${excludeTerms}`);
+    const excludeTerms = params.read('excludeterms');
     var exclusions = excludeTerms.split(',');
-
+    if (excludeTerms.trim() !== '')
+      logger.info(`Excluding terms: ${exclusions}`);
 
     var passed = true;
 
@@ -13023,16 +13374,16 @@ async function run() {
     //const dir = `C:/Temp`;
     //const dir = process.cwd().replaceAll("\\", "/");
 
-    const nonInclusiveTerms = await getNonInclusiveTerms();
+    const list = await nonInclusiveTerms.getNonInclusiveTerms();
 
     // list all files in the directory
     var filenames = getFilesFromDirectory(dir);
 
     filenames.forEach(filename => {
-      core.debug(`Scanning file: ${filename}`);
+      logger.debug(`Scanning file: ${filename}`);
       //core.startGroup(`Scanning file: ${filename}`);
 
-      nonInclusiveTerms.forEach(phrase => {
+/*       nonInclusiveTerms.forEach(phrase => {
         if (!exclusions.includes(phrase.term)) {
           var lines = checkFileForPhrase(filename, phrase.term);
 
@@ -13040,28 +13391,31 @@ async function run() {
             // The Action should fail
             passed = false;
 
-            core.warning(`Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}`);
             lines.forEach(line => {
-              core.warning(`\t[Line ${line.number}] ${line.content}`, { line: line.number });
-              //core.notice({ file: line.file, line: line.number, title: `Found the term '${phrase.term}', consider using alternatives: ${phrase.alternatives}` })
+              logger.warn(`[${line.file}:${line.number}] Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'`, line.file, line.number.toString(), line.column, `Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'`);
+              logger.debug(`[${line.file}:${line.number}] ${line.content}`);
+              //core.warning(`[${line.file}:${line.number}] Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'`, { file: line.file, startLine: line.number.toString(), startColumn: line.column, title: `Consider replacing term '${phrase.term}' with an alternative such as '${phrase.alternatives.join("', '")}'` });
+              //core.debug(`[${line.file}:${line.number}] ${line.content}`);
             });
           }
         }
         else
           core.debug(`Skipping the term '${phrase.term}'`);
-      });
+      }); */
+
+      passed = checkFileForTerms(filename, nonInclusiveTerms.getTermsRegex(exclusions), list);
 
       //core.endGroup();
     });
 
     if (!passed)
       if (failStep === 'true')
-        core.setFailed("Found non inclusive terms in some files.");
-      else
-        core.warning("Found non inclusive terms in some files.");
+        logger.fail("Found non inclusive terms in some files.");
+      //else
+      //  logger.warn("Found non inclusive terms in some files.");
 
   } catch (error) {
-    core.setFailed(error.message);
+    logger.fail(error.message);
   }
 }
 
