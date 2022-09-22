@@ -19,3 +19,4 @@ jobs:
         uses: ./
         with:
           excludeFromScan: '**/node_modules/**,**/dist/**,**/src/data.json,**/package.json'
+          lastCommit: 'true'
