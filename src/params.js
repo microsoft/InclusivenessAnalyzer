@@ -5,4 +5,8 @@ function read(name) {
     return core.getInput(name);
 }
 
-module.exports = { read };
+function readBoolean(name) {
+    return core.getBooleanInput(name);
+}
+
+module.exports = { read, readBoolean };

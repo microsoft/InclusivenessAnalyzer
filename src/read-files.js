@@ -1,21 +1,12 @@
 const glob = require("glob");
+var minimatch = require("minimatch")
+const { REPL_MODE_STRICT } = require("repl");
 
 const logger = require("./logger");
-const params = require("./params");
 
-const EXCLUSIONS = [".git", "node_modules"];
+const execSync = require("child_process").execSync;
 
-function getFilesFromDirectory(directoryPath) {
-
-    var exclusions = EXCLUSIONS;
-
-    // `exclude-from-scan` input defined in action metadata file
-    const excludeFromScan = params.read('excludeFromScan');
-    //const excludeFromScan = "**/*.ps1,**/*.mp4";
-    if (excludeFromScan !== '') {
-        exclusions = exclusions.concat(excludeFromScan.split(','));
-        logger.info(`Excluding file patterns : ${exclusions}`);
-    }
+function getFilesFromDirectory(directoryPath, exclusions) {
 
     // check coherene of base directory
     coherentDirectoryPath = directoryPath.trim().replace(/\\/g,"/")
@@ -37,4 +28,23 @@ function getFilesFromDirectory(directoryPath) {
     return filesArray;
 }
 
-module.exports = getFilesFromDirectory;
+function getFilesFromLastCommit(exclusions) {
+    var output = execSync('git log --format= --name-only --diff-filter=AM -n 1');
+    var files = output.toString().trim().split("\n");
+    var includedFiles = []
+    files.forEach(filename => {
+        var skip = false;
+        exclusions.forEach(pattern => {
+            if (minimatch(filename,pattern)) {
+                skip = true;
+                return;
+            }
+        });
+        if (skip) 
+            return;
+        includedFiles.push(filename);
+    });
+    return includedFiles;
+}
+
+module.exports = { getFilesFromDirectory, getFilesFromLastCommit };

@@ -11,6 +11,10 @@ inputs:
   excludeFromScan:
     description: 'Comma separated list of file patterns to exclude from analysis'
     required: false
+  lastCommit:
+    description: 'Check files added or modified in last commit'
+    required: false
+    default: 'false'
 runs:
   using: 'node16'
   main: 'dist/index.js'

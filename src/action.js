@@ -1,21 +1,39 @@
 const nonInclusiveTerms = require("./non-inclusive-terms");
-const getFilesFromDirectory = require("./read-files");
+const readFiles = require("./read-files");
 //const checkFileForPhrase = require("./file-content");
 const checkFileForTerms = require("./check-file");
 
 const logger = require("./logger");
 const params = require("./params");
 
+const EXCLUSIONS = [".git", "node_modules"];
+
 async function run() {
   try {
+    logger.info("Inclusiveness Analyzer")
     // `failStep` input defined in action metadata file
-    const failStep = params.read('failStep');
+    const failStep = params.readBoolean('failStep');
+    if (failStep) 
+      logger.info("- Failing if non-inclusive term are found");
 
     // `exclude-words` input defined in action metadata file
     const excludeTerms = params.read('excludeterms');
     var exclusions = excludeTerms.split(',');
     if (excludeTerms.trim() !== '')
-      logger.info(`Excluding terms: ${exclusions}`);
+      logger.info(`- Excluding terms: ${exclusions}`);
+
+    var exclusions = EXCLUSIONS;
+
+    // `exclude-from-scan` input defined in action metadata file
+    const excludeFromScan = params.read('excludeFromScan');
+    //const excludeFromScan = "**/*.ps1,**/*.mp4";
+    if (excludeFromScan !== '') {
+        exclusions = exclusions.concat(excludeFromScan.split(/[, ]+/));
+        logger.info(`- Excluding file patterns : ${exclusions}`);
+    }
+
+    // `last-commit` input defined in action metadata file
+    const checkLastCommit = params.readBoolean('lastCommit');
 
     var passed = true;
 
@@ -25,8 +43,14 @@ async function run() {
 
     const list = await nonInclusiveTerms.getNonInclusiveTerms();
 
-    // list all files in the directory
-    var filenames = getFilesFromDirectory(dir);
+    var filenames = []
+    if (checkLastCommit) {
+      logger.info("- Scanning files added or modified in last commit");
+      filenames = readFiles.getFilesFromLastCommit(exclusions);
+    } else { 
+      logger.info("- Scanning all files in directory");
+      filenames = readFiles.getFilesFromDirectory(dir,exclusions);
+    }
 
     filenames.forEach(filename => {
       logger.debug(`Scanning file: ${filename}`);
@@ -57,11 +81,8 @@ async function run() {
       //core.endGroup();
     });
 
-    if (!passed)
-      if (failStep === 'true')
+    if (!passed && failStep)
         logger.fail("Found non inclusive terms in some files.");
-      //else
-      //  logger.warn("Found non inclusive terms in some files.");
 
   } catch (error) {
     logger.fail(error.message);
