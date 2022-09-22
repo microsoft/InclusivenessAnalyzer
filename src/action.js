@@ -6,7 +6,7 @@ const checkFileForTerms = require("./check-file");
 const logger = require("./logger");
 const params = require("./params");
 
-const EXCLUSIONS = [".git", "node_modules"];
+const EXCLUSIONS = ["**/.git", "**/node_modules/**"];
 
 async function run() {
   try {
