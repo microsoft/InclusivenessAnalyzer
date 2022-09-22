@@ -11,4 +11,4 @@ The Inclusiveness Analyzer can be added to any C# project. Just install using Nu
 
 Important Note: The Inclusiveness Analyzer is only used during development time and does not affect your projects outputs or binaries.
 
-[NuGet Gallery](https://en.wikipedia.org/wiki/Sales_effectiveness](https://www.nuget.org/packages/InclusivenessAnalyzer/): NuGet Extension
+[NuGet Gallery](https://www.nuget.org/packages/InclusivenessAnalyzer/): NuGet Extension
