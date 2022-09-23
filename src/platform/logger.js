@@ -33,4 +33,8 @@ function fail(message) {
     core.setFailed(message);
 }
 
-module.exports = { info, warn, debug, fail };
+function succeededWithIssues(message) {
+    // GitHub does not have a succeededWithIssuesState, this method is only supported by the extension for now.
+}
+
+module.exports = { info, warn, debug, fail, succeededWithIssues };

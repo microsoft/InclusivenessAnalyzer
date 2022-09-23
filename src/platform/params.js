@@ -9,4 +9,8 @@ function readBoolean(name) {
     return core.getBooleanInput(name);
 }
 
-module.exports = { read, readBoolean };
+function getWorkingDirectory(){
+    return process.env.GITHUB_WORKSPACE;
+}
+
+module.exports = { read, readBoolean, getWorkingDirectory };

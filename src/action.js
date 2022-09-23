@@ -37,9 +37,7 @@ async function run() {
 
     var passed = true;
 
-    const dir = process.env.GITHUB_WORKSPACE;
-    //const dir = `C:/Temp`;
-    //const dir = process.cwd().replaceAll("\\", "/");
+    const dir = params.getWorkingDirectory();
 
     const list = await nonInclusiveTerms.getNonInclusiveTerms();
 
@@ -81,10 +79,17 @@ async function run() {
       //core.endGroup();
     });
 
-    if (!passed && failStep)
+    if (!passed){
+      if(failStep){
         logger.fail("Found non inclusive terms in some files.");
+      }
+      else{
+        logger.succeededWithIssues("Found non inclusive terms in some files.");
+      }
+    } 
 
   } catch (error) {
+    
     logger.fail(error.message);
   }
 }
