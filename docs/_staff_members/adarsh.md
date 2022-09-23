@@ -1,6 +1,6 @@
 ---
 name: Adarsh Rema
-position: Hacker (2022)
+position: Redmond, USA 🇺🇸
 image_path: /images/adarsh.jpeg
 twitter: 
 blurb: 

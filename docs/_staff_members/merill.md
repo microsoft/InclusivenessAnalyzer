@@ -1,6 +1,6 @@
 ---
 name: Merill Fernando
-position: Hacker (2020, 2022)
+position: Melbourne, Australia 🇦🇺
 image_path: /images/merill.jpeg
 twitter: 
 blurb: 

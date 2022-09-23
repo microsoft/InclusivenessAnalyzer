@@ -1,6 +1,6 @@
 ---
 name: Sana Noorani
-position: Hacker (2020)
+position: Texas, USA 🇺🇸
 image_path: /images/sana.jpeg
 twitter: SanaSNoorani
 blurb: 

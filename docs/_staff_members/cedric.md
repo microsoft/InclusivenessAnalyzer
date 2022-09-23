@@ -1,6 +1,6 @@
 ---
 name: Cédric Blomart
-position: Hacker (2022)
+position: Zaventem, Belgium 🇧🇪
 image_path: /images/cedric.jpeg
 twitter: cblomart
 blurb: 

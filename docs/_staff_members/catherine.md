@@ -1,6 +1,6 @@
 ---
 name: Catherine Watkins
-position: Hacker (2022)
+position: Redmond, USA 🇺🇸
 image_path: /images/catherine.jpeg
 twitter: 
 blurb: 

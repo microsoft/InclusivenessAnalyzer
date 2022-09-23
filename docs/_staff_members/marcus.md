@@ -1,6 +1,6 @@
 ---
 name: Marcus Carvalho
-position: Hacker (2022)
+position: Geneva, Switzerland 🇨🇭
 image_path: /images/marcus.jpeg
 twitter: MarcusCa
 blurb: 
