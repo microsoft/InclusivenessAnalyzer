@@ -12,18 +12,20 @@ The Inclusiveness Analyzer is a GitHub action that checks your repository for ex
 
 This GitHub action can be added to your build workflow to be triggered on each push or pull request. Once set up you will benefit from the automated detection of non-inclusive terms that could make their way into your application and your docs.
 
-> View and install [Inclusiveness Analyzer from the GitHub Action Marketplace](https://github.com/marketplace/actions/inclusiveness-analyzer)
+View and install [Inclusiveness Analyzer from the GitHub Action Marketplace](https://github.com/marketplace/actions/inclusiveness-analyzer)
 
 ## Add Inclusive Analyzer action to your build workflow
 
 * In your GitHub repository, select the **Actions** tab and either add or edit a workflow.
 * Search for **Inclusiveness Analyzer** from the **Marketplace** tab on the right.
 * Copy and paste the yaml into your workflow.
+
 ![Screenshot showing Inclusiveness Analyzer being added to a build.]({{ site.url }}/images/ghscreenshot-1.png)
 
 * Commit your changes to trigger the workflow or run the workflow manually
 * The Annotations view will show the first ten non-inclusive terms that are found.
 * You can select the Jobs detail log to view all the instances of non-inclusive terms.
+
 ![Screenshot showing Inclusiveness Analyzer warning of the work blacklist being used.]({{ site.url }}/images/ghscreenshot-2.png)
 
 ### Action configuration options
