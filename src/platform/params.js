@@ -1,12 +1,16 @@
 const core = require('@actions/core');
-const github = require('@actions/github');
 
 function read(name) {
     return core.getInput(name);
 }
 
 function readBoolean(name) {
-    return core.getBooleanInput(name);
+    try {
+        return core.getBooleanInput(name);
+    }
+    catch {
+        return defaultValue;
+    }
 }
 
 function getWorkingDirectory(){

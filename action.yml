@@ -11,10 +11,10 @@ inputs:
   excludeFromScan:
     description: 'Comma separated list of file patterns to exclude from analysis'
     required: false
-  lastCommit:
-    description: 'Check files added or modified in last commit'
+  excludeUnchangedFiles:
+    description: 'Only scan files added or modified in last commit when checkout step has "with: fetch-depth: 2" configured'
     required: false
-    default: 'false'
+    default: 'true'
 runs:
   using: 'node16'
   main: 'dist/index.js'
