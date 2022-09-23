@@ -7,7 +7,7 @@ author_staff_member: merill
 ---
 If you would like the Inclusiveness Analyzer to run on any Visual Studio Project, you can install the extension directly into Visual Studio.
 
-![Inclusiveness Analyzer gif](https://github.com/microsoft/InclusivenessAnalyzerVisualStudio/blob/main/docs/assets/intro.gif)
+![Inclusiveness Analyzer gif](https://github.com/microsoft/InclusivenessAnalyzerVisualStudio/raw/main/docs/assets/intro.gif)
 
 # How it works
 
