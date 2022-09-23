@@ -5,16 +5,16 @@ inputs:
     description: 'Fails the step if a non-inclusive term is found'
     required: false
     default: 'false'
-  excludeTerms:
-    description: 'Comma separated list of non-inclusive terms to exclude from analysis'
-    required: false
-  excludeFromScan:
-    description: 'Comma separated list of file patterns to exclude from analysis'
-    required: false
   excludeUnchangedFiles:
     description: 'Only scan files added or modified in last commit when checkout step has "with: fetch-depth: 2" configured'
     required: false
     default: 'true'
+  excludeFromScan:
+    description: 'Comma separated list of file patterns to exclude from analysis'
+    required: false
+  excludeTerms:
+    description: 'Comma separated list of non-inclusive terms to exclude from analysis'
+    required: false
 runs:
   using: 'node16'
   main: 'dist/index.js'
