@@ -13110,7 +13110,34 @@ function readBoolean(name) {
     }
 }
 
-module.exports = { read, readBoolean };
+module.exports = { getPlatform, read, readBoolean};
+
+/***/ }),
+
+/***/ 4646:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const logger = __nccwpck_require__(9298);
+const params = __nccwpck_require__(4038);
+
+// This module will contain platform specific methods that are either specific to GitHub or Azure DevOps
+
+function getWorkingDirectory(){
+    return process.env.GITHUB_WORKSPACE;
+}
+
+// Azure DevOps supports three states. This method allows custom logic for ADO.
+function logBuildFailure(){
+    // `failStep` input defined in action metadata file
+    const failStep = params.readBoolean('failStep', false);
+    
+    if(failStep){
+        logger.info("- Failing if non-inclusive term are found");
+        logger.fail("Found non inclusive terms in some files.");
+    }
+}
+
+module.exports = { getWorkingDirectory, logBuildFailure };
 
 /***/ }),
 
@@ -13167,6 +13194,22 @@ function getFilesFromLastCommit(exclusions) {
 }
 
 module.exports = { getFilesFromDirectory, getFilesFromLastCommit };
+
+/***/ }),
+
+/***/ 9298:
+/***/ ((module) => {
+
+module.exports = eval("require")("./platform/logger");
+
+
+/***/ }),
+
+/***/ 4038:
+/***/ ((module) => {
+
+module.exports = eval("require")("./platform/params");
+
 
 /***/ }),
 
@@ -13378,16 +13421,13 @@ const checkFileForTerms = __nccwpck_require__(4881);
 
 const logger = __nccwpck_require__(3038);
 const params = __nccwpck_require__(1598);
+const platform = __nccwpck_require__(4646);
 
 const EXCLUSIONS = ["**/.git", "**/node_modules/**"];
 
 async function run() {
   try {
     logger.info("Inclusiveness Analyzer")
-    // `failStep` input defined in action metadata file
-    const failStep = params.readBoolean('failStep', false);
-    if (failStep) 
-      logger.info("- Failing if non-inclusive term are found");
 
     // `exclude-words` input defined in action metadata file
     const excludeTerms = params.read('excludeterms');
@@ -13410,9 +13450,7 @@ async function run() {
 
     var passed = true;
 
-    const dir = process.env.GITHUB_WORKSPACE;
-    //const dir = `C:/Temp`;
-    //const dir = process.cwd().replaceAll("\\", "/");
+    const dir = platform.getWorkingDirectory();
 
     const list = await nonInclusiveTerms.getNonInclusiveTerms();
 
@@ -13454,8 +13492,9 @@ async function run() {
       //core.endGroup();
     });
 
-    if (!passed && failStep)
-        logger.fail("Found non inclusive terms in some files.");
+    if (!passed){
+      platform.logBuildFailure("Found non inclusive terms in some files.");
+    } 
 
   } catch (error) {
     logger.fail(error.message);

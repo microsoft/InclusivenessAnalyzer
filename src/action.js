@@ -5,16 +5,13 @@ const checkFileForTerms = require("./check-file");
 
 const logger = require("./platform/logger");
 const params = require("./platform/params");
+const platform = require("./platform/platform.js");
 
 const EXCLUSIONS = ["**/.git", "**/node_modules/**"];
 
 async function run() {
   try {
     logger.info("Inclusiveness Analyzer")
-    // `failStep` input defined in action metadata file
-    const failStep = params.readBoolean('failStep', false);
-    if (failStep) 
-      logger.info("- Failing if non-inclusive term are found");
 
     // `exclude-words` input defined in action metadata file
     const excludeTerms = params.read('excludeterms');
@@ -37,7 +34,7 @@ async function run() {
 
     var passed = true;
 
-    const dir = params.getWorkingDirectory();
+    const dir = platform.getWorkingDirectory();
 
     const list = await nonInclusiveTerms.getNonInclusiveTerms();
 
@@ -80,16 +77,10 @@ async function run() {
     });
 
     if (!passed){
-      if(failStep){
-        logger.fail("Found non inclusive terms in some files.");
-      }
-      else{
-        logger.succeededWithIssues("Found non inclusive terms in some files.");
-      }
+      platform.logBuildFailure("Found non inclusive terms in some files.");
     } 
 
   } catch (error) {
-    
     logger.fail(error.message);
   }
 }
