@@ -1,5 +1,5 @@
 ---
-date: 2022-01-03
+date: 2022-01-02
 title: Nuget Package
 categories:
    - install
