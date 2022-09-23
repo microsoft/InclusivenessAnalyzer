@@ -13175,6 +13175,9 @@ function getFilesFromDirectory(directoryPath, exclusions) {
 }
 
 function getFilesFromLastCommit(exclusions) {
+    var pull = execSync('git pull --depth 2');
+    logger.debug("git pull --depth 2");
+    logger.debug(pull);
     var output = execSync('git show --format= --name-only --diff-filter=AM');
     var files = output.toString().trim().split("\n");
     var includedFiles = []
