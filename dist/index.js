@@ -13110,15 +13110,15 @@ function readBoolean(name) {
     }
 }
 
-module.exports = { getPlatform, read, readBoolean};
+module.exports = { read, readBoolean};
 
 /***/ }),
 
 /***/ 4646:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const logger = __nccwpck_require__(9298);
-const params = __nccwpck_require__(4038);
+const logger = __nccwpck_require__(3038);
+const params = __nccwpck_require__(1598);
 
 // This module will contain platform specific methods that are either specific to GitHub or Azure DevOps
 
@@ -13194,22 +13194,6 @@ function getFilesFromLastCommit(exclusions) {
 }
 
 module.exports = { getFilesFromDirectory, getFilesFromLastCommit };
-
-/***/ }),
-
-/***/ 9298:
-/***/ ((module) => {
-
-module.exports = eval("require")("./platform/logger");
-
-
-/***/ }),
-
-/***/ 4038:
-/***/ ((module) => {
-
-module.exports = eval("require")("./platform/params");
-
 
 /***/ }),
 
