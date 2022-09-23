@@ -1,0 +1,22 @@
+# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+name: Scan github pages for inclusiveness
+
+on:
+  # Runs on pushes targeting the gh-pages branch
+  push:
+    branches: ["gh-pages"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # test documentation
+  Inclusiveness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Inclusiveness Analyser
+        uses: microsoft/InclusivenessAnalyser@v0.1.6-beta
+        with:
+          exludeUnchangedFiles: 'false'
