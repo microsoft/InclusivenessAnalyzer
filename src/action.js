@@ -12,7 +12,7 @@ async function run() {
   try {
     logger.info("Inclusiveness Analyzer")
     // `failStep` input defined in action metadata file
-    const failStep = params.readBoolean('failStep');
+    const failStep = params.readBoolean('failStep', false);
     if (failStep) 
       logger.info("- Failing if non-inclusive term are found");
 
@@ -32,8 +32,8 @@ async function run() {
         logger.info(`- Excluding file patterns : ${exclusions}`);
     }
 
-    // `last-commit` input defined in action metadata file
-    const checkLastCommit = params.readBoolean('lastCommit');
+    // `excludeUnchangedFiles` input defined in action metadata file
+    const excludeUnchangedFiles = params.readBoolean('excludeUnchangedFiles');
 
     var passed = true;
 
@@ -44,7 +44,7 @@ async function run() {
     const list = await nonInclusiveTerms.getNonInclusiveTerms();
 
     var filenames = []
-    if (checkLastCommit) {
+    if (excludeUnchangedFiles) {
       logger.info("- Scanning files added or modified in last commit");
       filenames = readFiles.getFilesFromLastCommit(exclusions);
     } else { 

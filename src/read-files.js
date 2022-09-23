@@ -29,7 +29,7 @@ function getFilesFromDirectory(directoryPath, exclusions) {
 }
 
 function getFilesFromLastCommit(exclusions) {
-    var output = execSync('git log --format= --name-only --diff-filter=AM -n 1');
+    var output = execSync('git show --format= --name-only --diff-filter=AM');
     var files = output.toString().trim().split("\n");
     var includedFiles = []
     files.forEach(filename => {
