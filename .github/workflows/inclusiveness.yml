@@ -17,6 +17,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Inclusiveness Analyser
-        uses: microsoft/InclusivenessAnalyser@v0.1.6-beta
+        uses: microsoft/InclusivenessAnalyzer@v0.1.6-beta
         with:
           exludeUnchangedFiles: 'false'
