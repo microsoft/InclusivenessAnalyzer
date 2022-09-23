@@ -21,6 +21,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Inclusiveness Analyser
+        uses: microsoft/InclusivenessAnalyser@v0.1.6-beta
+        with:
+          exludeUnchangedFiles: 'false'
   # Build job
   build:
     runs-on: ubuntu-latest
