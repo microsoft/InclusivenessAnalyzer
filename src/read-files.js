@@ -2,7 +2,7 @@ const glob = require("glob");
 var minimatch = require("minimatch")
 const { REPL_MODE_STRICT } = require("repl");
 
-const logger = require("./logger");
+const logger = require("./platform/logger");
 
 const execSync = require("child_process").execSync;
 

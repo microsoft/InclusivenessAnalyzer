@@ -3,8 +3,8 @@ const readFiles = require("./read-files");
 //const checkFileForPhrase = require("./file-content");
 const checkFileForTerms = require("./check-file");
 
-const logger = require("./logger");
-const params = require("./params");
+const logger = require("./platform/logger");
+const params = require("./platform/params");
 
 const EXCLUSIONS = ["**/.git", "**/node_modules/**"];
 

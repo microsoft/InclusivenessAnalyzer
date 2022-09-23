@@ -1,7 +1,6 @@
 const isBinaryFileSync = require('isbinaryfile').isBinaryFileSync;
 const fs = require('fs');
-const core = require('@actions/core');
-const logger = require("./logger");
+const logger = require("./platform/logger");
 
 function checkFileForTerms(file, expression, terms) {
     var passed = true;
@@ -45,7 +44,7 @@ function checkFileForTerms(file, expression, terms) {
     }
     else
         // refactor to use logger
-        core.debug(`Skipping binary file: ${file}`)
+        logger.debug(`Skipping binary file: ${file}`)
     
     return passed;
 }
