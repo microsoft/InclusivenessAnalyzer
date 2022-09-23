@@ -40,7 +40,3 @@ The Inclusiveness Analyzer can be added to any C# project. Just install using Nu
 ![Screenshot showing nuget install from command line.]({{ site.url }}/images/nuget-screenshot2.png)
 
 Important Note: The Inclusiveness Analyzer is only used during development time and does not affect your projects outputs or binaries.
-
-The extension is scheduled for install. Your extension will be installed after all instances of Visual Studio have been closed.
-
-![Screenshot showing Inclusiveness Analyzer being added to Visual Studio.]({{ site.url }}/images/vs-screenshot1.png)
