@@ -19,4 +19,4 @@ jobs:
       - name: Inclusiveness Analyser
         uses: microsoft/InclusivenessAnalyzer@v0.1.6-beta
         with:
-          excludeUnchangedFiles: 'false'
+          excludeFromScan: '**/docs/_posts/2022-01-01-azuredevopsextension.md'
