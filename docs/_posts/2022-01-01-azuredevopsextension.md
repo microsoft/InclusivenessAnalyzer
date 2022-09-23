@@ -11,6 +11,9 @@ Learn how to add the Inclusiveness Analyzer extension to your Azure DevOps Organ
 
 This Azure DevOps extension provides a build task that you can add in your build definition. You'll benefit from the automated detection of non-inclusive terms that could make their way into your application and your docs.
 
+* View and install [Inclusiveness Analyzer from the Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=InclusivenessAnalyzer.InclusivenessAnalyzerAzureDevOps)
+* [Provide feedback and report issues](https://github.com/microsoft/InclusivenessAnalyzerAzureDevOps)
+
 ## Install Inclusiveness Analyzer
 
 * Browse to the [Inclusiveness Analyzer Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=InclusivenessAnalyzer.InclusivenessAnalyzerAzureDevOps) page.
