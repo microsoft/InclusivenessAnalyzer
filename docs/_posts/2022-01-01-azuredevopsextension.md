@@ -14,7 +14,6 @@ This Azure DevOps extension provides a build task that you can add in your build
 ## Install Inclusiveness Analyzer
 
 * Browse to the [Inclusiveness Analyzer Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=InclusivenessAnalyzer.InclusivenessAnalyzerAzureDevOps) page.
-
 * Select **Get it free**
 
 ![Screenshot showing install page with Get it free button clicked.]({{ site.url }}/images/ado-install0.png)
