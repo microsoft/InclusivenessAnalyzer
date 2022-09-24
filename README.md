@@ -18,8 +18,10 @@ It also provides context on why a word is exclusive and suggests alternate terms
 Copy paste the following workflow definition into your project `.github/workflows/inclusiveness-analyzer.yml`
 
 ```yaml
-# This workflow checks out code and scans the content changed or added in the last commit for offensive / exclusive terms.
-# The scan will provide context on the found terms and alternatvies that can be used instead.
+# This workflow checks out code and scans the content changed or added in the 
+# last commit for offensive / exclusive terms.
+# The scan will provide context on the found terms and alternatvies that can be
+# used instead.
 
 name: Inclusiveness Analyser scan
 
