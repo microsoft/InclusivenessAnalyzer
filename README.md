@@ -15,6 +15,29 @@ It also provides context on why a word is exclusive and suggests alternate terms
 * Copy and paste the yaml into your workflow.
 ![Screenshot showing Inclusiveness Analyzer being added to a build.](docs/images/ghscreenshot-1.png)
 
+Copy paste the following workflow definition into your project `.github/workflows/inclusiveness-analyzer.yml`
+
+```yaml
+# This workflow checks out code and scans the content changed or added in the last commit for offensive / exclusive terms.
+# The scan will provide context on the found terms and alternatvies that can be used instead.
+
+name: Inclusiveness Analyser scan
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  Inclusiveness-Analyser-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Inclusiveness Analyser scan
+      uses: microsoft/InclusivenessAnalyser@v0.1.7
+```
+
 * Commit your changes to trigger the workflow or run the workflow manually
 * The Annotations view will show the first ten non-inclusive terms that are found.
 * You can select the Jobs detail log to view all the instances of non-inclusive terms.
@@ -24,30 +47,12 @@ It also provides context on why a word is exclusive and suggests alternate terms
 
 Use the options below to configure exclusions and build state when non-inclusive terms are found in the repository.
 
-**`failStep`**
-
-If `true` the build is failed if non-inclusive terms are found.
-
-If `false` (Default) the build completes successfully and warnings are provided in the logs.
-
-
-<br/>**`excludeUnchangedFiles`**
-
-If `true` (Default) limits the scan to files changed in the latest commit. If `false` a full scan is run on each commit.
-
-The git checkout step needs to have at least 'with: fetch-depth: 2' configured.|
-
-<br/>**`excludeFromScan`**
-
-Comma separated list of file patterns to exclude from analysis. [Glob patterns](https://github.com/isaacs/node-glob#glob-primer) are supported with a prefix of `**/`
-
-Eg. `**/skipme.txt,**/donotscan/*`
-
-<br/>**`excludeTerms`**
-
-Comma separated list of non-inclusive terms to exclude from analysis.
-
-Eg. `he,she`
+|          option          |            example             |  description  |
+|--------------------------|--------------------------------|---------------|
+| `failstep`               |                                | If `false` (Default) the build completes successfully and warnings are provided in the logs.<br/>If `true` the build is failed if non-inclusive terms are found. |
+| `excludeUnchangedFiles`  |                                | If `true` (Default) limits the scan to files changed in the latest commit.<br/>If `false` a full scan is run on each commit. |
+| `excludeFromScan`        | `**/skipme.txt,**/donotscan/*` | Comma separated list of file patterns to exclude from analysis. [Glob patterns](https://github.com/isaacs/node-glob#glob-primer) are supported with a prefix of `**/` |
+| `excludeTerms`           | `he,she`                       | Comma separated list of non-inclusive terms to exclude from analysis. |
 
 ## Inclusiveness Analyzer for other Platforms
 
