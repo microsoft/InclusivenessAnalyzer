@@ -1,3 +1,4 @@
+const { exec } = require("child_process");
 const glob = require("glob");
 var minimatch = require("minimatch")
 const { REPL_MODE_STRICT } = require("repl");
@@ -29,10 +30,15 @@ function getFilesFromDirectory(directoryPath, exclusions) {
 }
 
 function getFilesFromLastCommit(exclusions) {
-    var pull = execSync('git pull --depth 2');
-    logger.debug("git pull --depth 2");
-    logger.debug(pull);
+    // get current git branch
+    var branch = execSync('git branch --show-current');
+    logger.debug(`git branch: ${branch.toString().trim()}`);
+    var commit = execSync('git log -1 --format=%H');
+    logger.debug(`git commit: ${commit.toString().trim()}`);
+    var fetch = execSync(`git fetch -q --no-tags --no-recurse-submodules --depth=2 origin +${commit.toString().trim()}:refs/remotes/origin/${branch.toString().trim()}`);
+    logger.debug(`git fetch: +${commit.toString().trim()}:refs/remotes/origin/${branch.toString().trim()}\n${fetch.toString().trim()}`);
     var output = execSync('git show --format= --name-only --diff-filter=AM');
+    logger.debug(`git show: \n${output.toString().trim()}`);
     var files = output.toString().trim().split("\n");
     var includedFiles = []
     files.forEach(filename => {
