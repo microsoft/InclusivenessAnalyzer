@@ -7,30 +7,30 @@ const logger = require("./platform/logger");
 const params = require("./platform/params");
 const platform = require("./platform/platform.js");
 
-const EXCLUSIONS = ["**/.git", "**/node_modules/**"];
+const excludeFromScanAlwaysList = ["**/.git", "**/node_modules/**"];
 
 async function run() {
   try {
     logger.info("Inclusiveness Analyzer")
 
     // `exclude-words` input defined in action metadata file
-    const excludeTerms = params.read('excludeterms');
-    var exclusions = excludeTerms.split(',');
-    if (excludeTerms.trim() !== '')
-      logger.info(`- Excluding terms: ${exclusions}`);
+    const excludeTermsParam = params.read('excludeterms');
+    var excludeTermsList = excludeTermsParam.split(',');
+    if (excludeTermsParam.trim() !== '')
+      logger.info(`- Excluding terms: ${excludeTermsList}`);
 
-    var exclusions = EXCLUSIONS;
+    var excludeFromScanList = excludeFromScanAlwaysList;
 
     // `exclude-from-scan` input defined in action metadata file
-    const excludeFromScan = params.read('excludeFromScan');
+    const excludeFromScanParam = params.read('excludeFromScan');
     //const excludeFromScan = "**/*.ps1,**/*.mp4";
-    if (excludeFromScan !== '') {
-        exclusions = exclusions.concat(excludeFromScan.split(/[, ]+/));
-        logger.info(`- Excluding file patterns : ${exclusions}`);
+    if (excludeFromScanParam !== '') {
+      excludeFromScanList = excludeFromScanList.concat(excludeFromScanParam.split(/[, ]+/));
+      logger.info(`- Excluding file patterns : ${excludeFromScanList}`);
     }
 
     // `excludeUnchangedFiles` input defined in action metadata file
-    const excludeUnchangedFiles = params.readBoolean('excludeUnchangedFiles');
+    const excludeUnchangedFilesParam = params.readBoolean('excludeUnchangedFiles');
 
     var passed = true;
 
@@ -39,12 +39,12 @@ async function run() {
     const list = await nonInclusiveTerms.getNonInclusiveTerms();
 
     var filenames = []
-    if (excludeUnchangedFiles) {
+    if (excludeUnchangedFilesParam) {
       logger.info("- Scanning files added or modified in last commit");
-      filenames = readFiles.getFilesFromLastCommit(exclusions);
+      filenames = readFiles.getFilesFromLastCommit(excludeFromScanList);
     } else { 
       logger.info("- Scanning all files in directory");
-      filenames = readFiles.getFilesFromDirectory(dir,exclusions);
+      filenames = readFiles.getFilesFromDirectory(dir,excludeFromScanList);
     }
 
     filenames.forEach(filename => {
@@ -71,7 +71,7 @@ async function run() {
           core.debug(`Skipping the term '${phrase.term}'`);
       }); */
 
-      passed = checkFileForTerms(filename, nonInclusiveTerms.getTermsRegex(exclusions), list);
+      passed = checkFileForTerms(filename, nonInclusiveTerms.getTermsRegex(excludeTermsList), list);
 
       //core.endGroup();
     });
