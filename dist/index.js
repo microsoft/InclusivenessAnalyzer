@@ -13129,10 +13129,10 @@ function getWorkingDirectory(){
 // Azure DevOps supports three states. This method allows custom logic for ADO.
 function logBuildFailure(){
     // `failStep` input defined in action metadata file
-    const failStepParam = params.readBoolean('failOnNonInclusiveTerm', false);
+    const failOnNonInclusiveTermParam = params.readBoolean('failOnNonInclusiveTerm', false);
     
-    if(failStepParam){
-        logger.info("- Failing if non-inclusive term are found");
+    if (failOnNonInclusiveTermParam){
+        logger.info("- Failing if non-inclusive term is found");
         logger.fail("Found non inclusive terms in some files.");
     }
 }
@@ -13423,7 +13423,7 @@ async function run() {
     logger.info("Inclusiveness Analyzer")
 
     // `exclude-words` input defined in action metadata file
-    const excludeTermsParam = params.read('excludeterms');
+    const excludeTermsParam = params.read('excludeTerms');
     var excludeTermsList = excludeTermsParam.split(/[, ]+/);
     if (excludeTermsParam.trim() !== '')
       logger.info(`- Excluding terms: ${excludeTermsList}`);

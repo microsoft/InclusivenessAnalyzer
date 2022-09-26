@@ -14,7 +14,7 @@ async function run() {
     logger.info("Inclusiveness Analyzer")
 
     // `exclude-words` input defined in action metadata file
-    const excludeTermsParam = params.read('excludeterms');
+    const excludeTermsParam = params.read('excludeTerms');
     var excludeTermsList = excludeTermsParam.split(/[, ]+/);
     if (excludeTermsParam.trim() !== '')
       logger.info(`- Excluding terms: ${excludeTermsList}`);
