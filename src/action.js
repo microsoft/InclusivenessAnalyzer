@@ -15,18 +15,18 @@ async function run() {
 
     // `exclude-words` input defined in action metadata file
     const excludeTermsParam = params.read('excludeterms');
-    var excludeTermsList = excludeTermsParam.split(',');
+    var excludeTermsList = excludeTermsParam.split(/[, ]+/);
     if (excludeTermsParam.trim() !== '')
       logger.info(`- Excluding terms: ${excludeTermsList}`);
 
-    var excludeFromScanList = excludeFromScanAlwaysList;
+    var excludeFilesList = excludeFromScanAlwaysList;
 
-    // `exclude-from-scan` input defined in action metadata file
-    const excludeFromScanParam = params.read('excludeFromScan');
+    // `exclude-files` input defined in action metadata file
+    const excludeFilesParam = params.read('excludeFiles');
     //const excludeFromScan = "**/*.ps1,**/*.mp4";
-    if (excludeFromScanParam !== '') {
-      excludeFromScanList = excludeFromScanList.concat(excludeFromScanParam.split(/[, ]+/));
-      logger.info(`- Excluding file patterns : ${excludeFromScanList}`);
+    if (excludeFilesParam !== '') {
+      excludeFilesList = excludeFilesList.concat(excludeFilesParam.split(/[, ]+/));
+      logger.info(`- Excluding file patterns : ${excludeFilesList}`);
     }
 
     // `excludeUnchangedFiles` input defined in action metadata file
@@ -41,10 +41,10 @@ async function run() {
     var filenames = []
     if (excludeUnchangedFilesParam) {
       logger.info("- Scanning files added or modified in last commit");
-      filenames = readFiles.getFilesFromLastCommit(excludeFromScanList);
+      filenames = readFiles.getFilesFromLastCommit(excludeFilesList);
     } else { 
       logger.info("- Scanning all files in directory");
-      filenames = readFiles.getFilesFromDirectory(dir,excludeFromScanList);
+      filenames = readFiles.getFilesFromDirectory(dir,excludeFilesList);
     }
 
     filenames.forEach(filename => {

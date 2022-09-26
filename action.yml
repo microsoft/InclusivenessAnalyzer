@@ -1,7 +1,7 @@
 name: 'Inclusiveness Analyzer'
 description: 'This GitHub action scans your repository for non-inclusive terms and provide alternative suggestions.'
 inputs:
-  failStep:
+  failOnNonInclusiveTerm:
     description: 'Fails the step if a non-inclusive term is found'
     required: false
     default: 'false'
@@ -9,7 +9,7 @@ inputs:
     description: 'Only scan files added or modified in last commit when checkout step has "with: fetch-depth: 2" configured'
     required: false
     default: 'true'
-  excludeFromScan:
+  excludeFiles:
     description: 'Comma separated list of file patterns to exclude from analysis'
     required: false
   excludeTerms:
