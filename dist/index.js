@@ -13129,10 +13129,10 @@ function getWorkingDirectory(){
 // Azure DevOps supports three states. This method allows custom logic for ADO.
 function logBuildFailure(){
     // `failStep` input defined in action metadata file
-    const failStep = params.readBoolean('failStep', false);
+    const failOnNonInclusiveTermParam = params.readBoolean('failOnNonInclusiveTerm', false);
     
-    if(failStep){
-        logger.info("- Failing if non-inclusive term are found");
+    if (failOnNonInclusiveTermParam){
+        logger.info("- Failing if non-inclusive term is found");
         logger.fail("Found non inclusive terms in some files.");
     }
 }
@@ -13416,30 +13416,30 @@ const logger = __nccwpck_require__(3038);
 const params = __nccwpck_require__(1598);
 const platform = __nccwpck_require__(4646);
 
-const EXCLUSIONS = ["**/.git", "**/node_modules/**"];
+const excludeFromScanAlwaysList = ["**/.git", "**/node_modules/**"];
 
 async function run() {
   try {
     logger.info("Inclusiveness Analyzer")
 
     // `exclude-words` input defined in action metadata file
-    const excludeTerms = params.read('excludeterms');
-    var exclusions = excludeTerms.split(',');
-    if (excludeTerms.trim() !== '')
-      logger.info(`- Excluding terms: ${exclusions}`);
+    const excludeTermsParam = params.read('excludeTerms');
+    var excludeTermsList = excludeTermsParam.split(/[, ]+/);
+    if (excludeTermsParam.trim() !== '')
+      logger.info(`- Excluding terms: ${excludeTermsList}`);
 
-    var exclusions = EXCLUSIONS;
+    var excludeFilesList = excludeFromScanAlwaysList;
 
-    // `exclude-from-scan` input defined in action metadata file
-    const excludeFromScan = params.read('excludeFromScan');
+    // `exclude-files` input defined in action metadata file
+    const excludeFilesParam = params.read('excludeFiles');
     //const excludeFromScan = "**/*.ps1,**/*.mp4";
-    if (excludeFromScan !== '') {
-        exclusions = exclusions.concat(excludeFromScan.split(/[, ]+/));
-        logger.info(`- Excluding file patterns : ${exclusions}`);
+    if (excludeFilesParam !== '') {
+      excludeFilesList = excludeFilesList.concat(excludeFilesParam.split(/[, ]+/));
+      logger.info(`- Excluding file patterns : ${excludeFilesList}`);
     }
 
     // `excludeUnchangedFiles` input defined in action metadata file
-    const excludeUnchangedFiles = params.readBoolean('excludeUnchangedFiles');
+    const excludeUnchangedFilesParam = params.readBoolean('excludeUnchangedFiles');
 
     var passed = true;
 
@@ -13448,12 +13448,12 @@ async function run() {
     const list = await nonInclusiveTerms.getNonInclusiveTerms();
 
     var filenames = []
-    if (excludeUnchangedFiles) {
+    if (excludeUnchangedFilesParam) {
       logger.info("- Scanning files added or modified in last commit");
-      filenames = readFiles.getFilesFromLastCommit(exclusions);
+      filenames = readFiles.getFilesFromLastCommit(excludeFilesList);
     } else { 
       logger.info("- Scanning all files in directory");
-      filenames = readFiles.getFilesFromDirectory(dir,exclusions);
+      filenames = readFiles.getFilesFromDirectory(dir,excludeFilesList);
     }
 
     filenames.forEach(filename => {
@@ -13480,7 +13480,7 @@ async function run() {
           core.debug(`Skipping the term '${phrase.term}'`);
       }); */
 
-      passed = checkFileForTerms(filename, nonInclusiveTerms.getTermsRegex(exclusions), list);
+      passed = checkFileForTerms(filename, nonInclusiveTerms.getTermsRegex(excludeTermsList), list);
 
       //core.endGroup();
     });
