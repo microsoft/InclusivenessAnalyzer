@@ -36,8 +36,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Inclusiveness Analyser scan
-      uses: microsoft/InclusivenessAnalyser@v0.1.7
+    - name: Inclusiveness Analyzer
+      uses: microsoft/InclusivenessAnalyzer@v1.0.0
 ```
 
 * Commit your changes to trigger the workflow or run the workflow manually
