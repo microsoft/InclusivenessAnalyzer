@@ -17,6 +17,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Inclusiveness Analyser
-        uses: microsoft/InclusivenessAnalyzer@v0.1.7-beta
+        uses: microsoft/InclusivenessAnalyzer@v1.0.1
         with:
           excludeFromScan: '**/docs/_posts/2022-01-01-azuredevopsextension.md'
