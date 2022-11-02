@@ -13185,20 +13185,24 @@ function getFilesFromLastCommit(exclusions) {
     logger.debug(`git fetch: +${commit.toString().trim()}:refs/remotes/origin/${branch.toString().trim()}\n${fetch.toString().trim()}`);
     var output = execSync('git show --format= --name-only --diff-filter=AM');
     logger.debug(`git show: \n${output.toString().trim()}`);
-    var files = output.toString().trim().split("\n");
+    var outputstring = output.toString().trim()
     var includedFiles = []
-    files.forEach(filename => {
-        var skip = false;
-        exclusions.forEach(pattern => {
-            if (minimatch(filename,pattern)) {
-                skip = true;
+    if (outputstring) {
+        var files = outputstring.split("\n");
+        var includedFiles = []
+        files.forEach(filename => {
+            var skip = false;
+            exclusions.forEach(pattern => {
+                if (minimatch(filename,pattern)) {
+                    skip = true;
+                    return;
+                }
+            });
+            if (skip) 
                 return;
-            }
+            includedFiles.push(filename);
         });
-        if (skip) 
-            return;
-        includedFiles.push(filename);
-    });
+    }
     return includedFiles;
 }
 
