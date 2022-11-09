@@ -37,7 +37,7 @@ function getFilesFromLastCommit(exclusions) {
     logger.debug(`git commit: ${commit.toString().trim()}`);
     var fetch = execSync(`git fetch -q --no-tags --no-recurse-submodules --depth=2 origin +${commit.toString().trim()}:refs/remotes/origin/${branch.toString().trim()}`);
     logger.debug(`git fetch: +${commit.toString().trim()}:refs/remotes/origin/${branch.toString().trim()}\n${fetch.toString().trim()}`);
-    var output = execSync('git show --format= --name-only --diff-filter=AM');
+    var output = execSync('git show --format= --name-only --diff-filter=d');
     logger.debug(`git show: \n${output.toString().trim()}`);
     var outputstring = output.toString().trim()
     var includedFiles = []
