@@ -29,10 +29,14 @@ function getFilesFromDirectory(directoryPath, exclusions) {
     return filesArray;
 }
 
-function getFilesFromLastCommit(exclusions) {
+function getFilesFromLastCommit(directoryPath, exclusions) {
     // get current git branch
     var branch = execSync('git branch --show-current');
     logger.debug(`git branch: ${branch.toString().trim()}`);
+    if (branch === ""){
+        logger.debug("Branch is empty, returning all files in path");
+        return getFilesFromDirectory(directoryPath, exclusions)
+    }
     var commit = execSync('git log -1 --format=%H');
     logger.debug(`git commit: ${commit.toString().trim()}`);
     var fetch = execSync(`git fetch -q --no-tags --no-recurse-submodules --depth=2 origin +${commit.toString().trim()}:refs/remotes/origin/${branch.toString().trim()}`);
