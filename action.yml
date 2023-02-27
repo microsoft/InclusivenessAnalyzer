@@ -15,6 +15,10 @@ inputs:
   excludeTerms:
     description: 'Comma separated list of non-inclusive terms to exclude from analysis'
     required: false
+  maxLineLength:
+    description: 'Maximum line length to scan'
+    required: false
+    default: '1000'
 runs:
   using: 'node16'
   main: 'dist/index.js'
