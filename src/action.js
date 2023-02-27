@@ -47,6 +47,8 @@ async function run() {
       filenames = readFiles.getFilesFromDirectory(dir, excludeFilesList);
     }
 
+    const maxLineLength = parseInt(params.read("maxLineLength"));
+
     filenames.forEach(filename => {
       logger.debug(`Scanning file: ${filename}`);
       //core.startGroup(`Scanning file: ${filename}`);
@@ -71,7 +73,7 @@ async function run() {
           core.debug(`Skipping the term '${phrase.term}'`);
       }); */
 
-      passed = checkFileForTerms(filename, nonInclusiveTerms.getTermsRegex(excludeTermsList), list);
+      passed = checkFileForTerms(filename, nonInclusiveTerms.getTermsRegex(excludeTermsList), list, maxLineLength);
 
       //core.endGroup();
     });
