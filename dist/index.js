@@ -13175,15 +13175,19 @@ function getFilesFromDirectory(directoryPath, exclusions) {
     return filesArray;
 }
 
-function getFilesFromLastCommit(exclusions) {
+function getFilesFromLastCommit(directoryPath, exclusions) {
     // get current git branch
-    var branch = execSync('git branch --show-current');
-    logger.debug(`git branch: ${branch.toString().trim()}`);
-    var commit = execSync('git log -1 --format=%H');
-    logger.debug(`git commit: ${commit.toString().trim()}`);
-    var fetch = execSync(`git fetch -q --no-tags --no-recurse-submodules --depth=2 origin +${commit.toString().trim()}:refs/remotes/origin/${branch.toString().trim()}`);
-    logger.debug(`git fetch: +${commit.toString().trim()}:refs/remotes/origin/${branch.toString().trim()}\n${fetch.toString().trim()}`);
-    var output = execSync('git show --format= --name-only --diff-filter=AM');
+    var branch = execSync('git branch --show-current').toString().trim();
+    logger.debug(`git branch: ${branch}`);
+    if (branch === ""){
+        logger.debug("Branch is empty, returning all files in path");
+        return getFilesFromDirectory(directoryPath, exclusions)
+    }
+    var commit = execSync('git log -1 --format=%H').toString().trim();
+    logger.debug(`git commit: ${commit}`);
+    var fetch = execSync(`git fetch -q --no-tags --no-recurse-submodules --depth=2 origin +${commit}:refs/remotes/origin/${branch}`);
+    logger.debug(`git fetch: +${commit}:refs/remotes/origin/${branch}\n${fetch.toString().trim()}`);
+    var output = execSync('git show --format= --name-only --diff-filter=d');
     logger.debug(`git show: \n${output.toString().trim()}`);
     var outputstring = output.toString().trim()
     var includedFiles = []
@@ -13207,6 +13211,7 @@ function getFilesFromLastCommit(exclusions) {
 }
 
 module.exports = { getFilesFromDirectory, getFilesFromLastCommit };
+
 
 /***/ }),
 
@@ -13454,10 +13459,10 @@ async function run() {
     var filenames = []
     if (excludeUnchangedFilesParam) {
       logger.info("- Scanning files added or modified in last commit");
-      filenames = readFiles.getFilesFromLastCommit(excludeFilesList);
+      filenames = readFiles.getFilesFromLastCommit(dir, excludeFilesList);
     } else { 
       logger.info("- Scanning all files in directory");
-      filenames = readFiles.getFilesFromDirectory(dir,excludeFilesList);
+      filenames = readFiles.getFilesFromDirectory(dir, excludeFilesList);
     }
 
     filenames.forEach(filename => {

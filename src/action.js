@@ -41,10 +41,10 @@ async function run() {
     var filenames = []
     if (excludeUnchangedFilesParam) {
       logger.info("- Scanning files added or modified in last commit");
-      filenames = readFiles.getFilesFromLastCommit(excludeFilesList);
+      filenames = readFiles.getFilesFromLastCommit(dir, excludeFilesList);
     } else { 
       logger.info("- Scanning all files in directory");
-      filenames = readFiles.getFilesFromDirectory(dir,excludeFilesList);
+      filenames = readFiles.getFilesFromDirectory(dir, excludeFilesList);
     }
 
     filenames.forEach(filename => {
