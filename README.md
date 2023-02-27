@@ -55,6 +55,7 @@ Use the options below to configure exclusions and build state when non-inclusive
 | `excludeUnchangedFiles`  |                                | If `true` (Default) limits the scan to files changed in the latest commit.<br/>If `false` a full scan is run on each commit. |
 | `excludeFiles   `        | `**/skipme.txt,**/donotscan/*` | Comma separated list of file patterns to exclude from analysis. [Glob patterns](https://github.com/isaacs/node-glob#glob-primer) are supported with a prefix of `**/` |
 | `excludeTerms`           | `he,she`                       | Comma separated list of non-inclusive terms to exclude from analysis. |
+| `maxLineLength`          | 2000                           | Maximum line length to inspect. Defaults to 1000. |
 
 ## Inclusiveness Analyzer for other Platforms
 
