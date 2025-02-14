@@ -27,7 +27,7 @@
   "homepage": "https://github.com/microsoft/InclusivenessAnalyzer#readme",
   "dependencies": {
     "@actions/core": "^1.9.1",
-    "@actions/github": "^5.0.1",
+    "@actions/github": "^6.0.0",
     "glob": "^8.0.3",
     "isbinaryfile": "^5.0.0"
   },
